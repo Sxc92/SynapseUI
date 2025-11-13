@@ -158,8 +158,9 @@ export type PageHttpResponse<T = any> = HttpResponse<PageResponse<T>>;
  * // 结果: { name?: string; age?: number; pageNo: number; pageSize: number; ... }
  * ```
  */
-export type PaginatedRequest<T extends Record<string, any> = Record<string, any>> = PageRequest &
-  T;
+export type PaginatedRequest<
+  T extends Record<string, any> = Record<string, any>,
+> = PageRequest & T;
 
 /**
  * 分页查询参数类型工具（兼容别名）
@@ -175,5 +176,6 @@ export type PaginatedRequest<T extends Record<string, any> = Record<string, any>
  * // 可以使用 pageNo 或 currentPage 或 page
  * ```
  */
-export type PaginatedRequestAlias<T extends Record<string, any> = Record<string, any>> =
-  PageRequestAlias & T;
+export type PaginatedRequestAlias<
+  T extends Record<string, any> = Record<string, any>,
+> = PageRequestAlias & T;

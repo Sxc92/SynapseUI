@@ -136,7 +136,7 @@ export function registerRenderers(vxeUI: VxeUIExport) {
       const { text, status, badge = false } = statusInfo;
 
       if (badge) {
-        let badgeStatus: 'success' | 'error' | 'default' = 'default';
+        let badgeStatus: 'default' | 'error' | 'success' = 'default';
         if (status === 'success') {
           badgeStatus = 'success';
         } else if (status === 'error') {
@@ -168,13 +168,24 @@ export function registerRenderers(vxeUI: VxeUIExport) {
         );
       }
 
-      let tagColor: 'success' | 'error' | 'warning' | 'default' = 'default';
-      if (status === 'success') {
-        tagColor = 'success';
-      } else if (status === 'error') {
-        tagColor = 'error';
-      } else if (status === 'warning') {
-        tagColor = 'warning';
+      let tagColor: 'default' | 'error' | 'success' | 'warning' = 'default';
+      switch (status) {
+        case 'error': {
+          tagColor = 'error';
+
+          break;
+        }
+        case 'success': {
+          tagColor = 'success';
+
+          break;
+        }
+        case 'warning': {
+          tagColor = 'warning';
+
+          break;
+        }
+        // No default
       }
 
       return h(

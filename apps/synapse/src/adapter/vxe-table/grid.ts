@@ -176,7 +176,7 @@ export function createGrid<T = any>(options: GridOptions<T>): GridInstance<T> {
             expandAll: options.treeConfig.expandAll || false,
             transform: (options.treeConfig as any).transform ?? true,
           };
-    }
+  }
 
   // 创建状态开关函数（在初始化 grid 之前创建，避免循环依赖）
   const createStatusSwitch = (row: T, field = 'status') => {
@@ -199,7 +199,9 @@ export function createGrid<T = any>(options: GridOptions<T>): GridInstance<T> {
               if (gridApiRef.value) {
                 gridApiRef.value.setLoading(true);
               }
-              const result = await (options.api.enable as (id: any) => Promise<any>)((row as any).id);
+              const result = await (
+                options.api.enable as (id: any) => Promise<any>
+              )((row as any).id);
               if (result.code === 200) {
                 message.success(result.msg || $t('common.success'));
                 if (gridApiRef.value) {
@@ -209,7 +211,6 @@ export function createGrid<T = any>(options: GridOptions<T>): GridInstance<T> {
                 message.error(result.msg || $t('common.error'));
               }
             } catch (error) {
-              // eslint-disable-next-line no-console
               console.error(error);
               message.error($t('common.error'));
             } finally {
@@ -238,7 +239,9 @@ export function createGrid<T = any>(options: GridOptions<T>): GridInstance<T> {
             if (gridApiRef.value) {
               gridApiRef.value.setLoading(true);
             }
-            const result = await (options.api.remove as (ids: any[]) => Promise<any>)([(row as any).id]);
+            const result = await (
+              options.api.remove as (ids: any[]) => Promise<any>
+            )([(row as any).id]);
             if (result.code === 200) {
               message.success($t('common.deleteSuccess'));
               if (gridApiRef.value) {
@@ -450,7 +453,6 @@ export function createGrid<T = any>(options: GridOptions<T>): GridInstance<T> {
 
             return pageData;
           } catch (error) {
-            // eslint-disable-next-line no-console
             console.error('数据加载错误', error);
             message.error($t('common.queryFailed'));
             // 返回空数据结构，避免表格错误
