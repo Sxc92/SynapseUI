@@ -1,0 +1,386 @@
+# VXE Table 配置中心使用文档
+
+## 简介
+
+本项目对 `vxe-table` 进行了完整的集成和封装，提供了配置中心模式，统一管理所有表格配置、自定义渲染器和格式化器。
+
+## 快速开始
+
+### 基础使用
+
+```vue
+<script setup lang="ts">
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
+
+interface RowType {
+  id: number;
+  name: string;
+  status: string;
+}
+
+const [Grid, gridApi] = useVbenVxeGrid<RowType>({
+  gridOptions: {
+    columns: [
+      { field: 'id', title: 'ID', width: 80 },
+      { field: 'name', title: '名称' },
+      {
+        field: 'status',
+        title: '状态',
+        cellRender: {
+          name: 'CellStatus',
+          props: {
+            statusMap: {
+              active: { text: '启用', status: 'success' },
+              inactive: { text: '禁用', status: 'error' },
+            },
+          },
+        },
+      },
+    ],
+    data: [{ id: 1, name: '测试', status: 'active' }],
+  },
+});
+</script>
+
+<template>
+  <Grid table-title="数据列表" />
+</template>
+```
+
+## 自定义渲染器
+
+### CellImage - 图片渲染器
+
+```typescript
+{
+  field: 'avatar',
+  title: '头像',
+  cellRender: {
+    name: 'CellImage',
+    props: { width: 50, height: 50, preview: true }
+  }
+}
+```
+
+### CellLink - 链接渲染器
+
+```typescript
+{
+  field: 'name',
+  title: '名称',
+  cellRender: {
+    name: 'CellLink',
+    props: {
+      text: '查看详情',
+      href: '/detail',
+      onClick: (row) => console.log(row)
+    }
+  }
+}
+```
+
+### CellTag - 标签渲染器
+
+```typescript
+{
+  field: 'type',
+  title: '类型',
+  cellRender: {
+    name: 'CellTag',
+    props: {
+      colorMap: {
+        'A': 'success',
+        'B': 'warning',
+        'C': 'error'
+      }
+    }
+  }
+}
+```
+
+### CellStatus - 状态渲染器
+
+```typescript
+{
+  field: 'status',
+  title: '状态',
+  cellRender: {
+    name: 'CellStatus',
+    props: {
+      statusMap: {
+        active: { text: '启用', status: 'success', badge: false },
+        inactive: { text: '禁用', status: 'error' }
+      },
+      showDot: true  // 显示圆点
+    }
+  }
+}
+```
+
+### CellActions - 操作按钮渲染器
+
+```typescript
+{
+  title: '操作',
+  cellRender: {
+    name: 'CellActions',
+    props: {
+      actions: [
+        {
+          text: '编辑',
+          onClick: (row) => handleEdit(row)
+        },
+        {
+          text: '删除',
+          danger: true,
+          confirm: '确定删除吗？',
+          onClick: (row) => handleDelete(row)
+        }
+      ]
+    }
+  }
+}
+```
+
+### CellMoney - 金额渲染器
+
+```typescript
+{
+  field: 'amount',
+  title: '金额',
+  cellRender: {
+    name: 'CellMoney',
+    props: {
+      prefix: '¥',
+      precision: 2,
+      thousands: true,
+      color: '#f5222d'  // 可选颜色
+    }
+  }
+}
+```
+
+### CellProgress - 进度条渲染器
+
+```typescript
+{
+  field: 'progress',
+  title: '进度',
+  cellRender: {
+    name: 'CellProgress',
+    props: {
+      min: 0,
+      max: 100,
+      showInfo: true,
+      format: (percent) => `${percent}%`
+    }
+  }
+}
+```
+
+### CellTooltip - 提示渲染器
+
+```typescript
+{
+  field: 'description',
+  title: '描述',
+  cellRender: {
+    name: 'CellTooltip',
+    props: {
+      title: '这是提示内容',
+      placement: 'top',
+      maxWidth: 300
+    }
+  }
+}
+```
+
+## 自定义格式化器
+
+### 基础格式化器
+
+```typescript
+{
+  field: 'date',
+  title: '日期',
+  formatter: 'formatDate'  // YYYY-MM-DD
+}
+
+{
+  field: 'datetime',
+  title: '日期时间',
+  formatter: 'formatDateTime'  // YYYY-MM-DD HH:mm:ss
+}
+
+{
+  field: 'amount',
+  title: '金额',
+  formatter: 'formatMoney'  // ¥1,234.56
+}
+
+{
+  field: 'rate',
+  title: '百分比',
+  formatter: 'formatPercent'  // 85.50%
+}
+
+{
+  field: 'size',
+  title: '文件大小',
+  formatter: 'formatFileSize'  // 1.5 MB
+}
+
+{
+  field: 'phone',
+  title: '手机号',
+  formatter: 'formatPhone'  // 138 **** 8888
+}
+
+{
+  field: 'bankCard',
+  title: '银行卡',
+  formatter: 'formatBankCard'  // 6222 **** **** 8888
+}
+
+{
+  field: 'idCard',
+  title: '身份证',
+  formatter: 'formatIdCard'  // 110101********1234
+}
+
+{
+  field: 'count',
+  title: '数量',
+  formatter: 'formatNumber'  // 1,234
+}
+
+{
+  field: 'duration',
+  title: '时长',
+  formatter: 'formatDuration'  // 1:23:45
+}
+```
+
+### 带参数的格式化器
+
+```typescript
+{
+  field: 'amount',
+  title: '金额',
+  formatter: ({ cellValue }, { params }) => {
+    return formatMoney(cellValue, {
+      prefix: '$',
+      precision: 2
+    });
+  }
+}
+```
+
+## 远程数据加载
+
+```typescript
+const [Grid, gridApi] = useVbenVxeGrid({
+  gridOptions: {
+    proxyConfig: {
+      ajax: {
+        query: async ({ page, sort, filters, form }) => {
+          const response = await fetch('/api/data', {
+            method: 'POST',
+            body: JSON.stringify({
+              page: page.currentPage,
+              pageSize: page.pageSize,
+              ...form,
+            }),
+          });
+          return await response.json();
+        },
+      },
+    },
+    pagerConfig: { enabled: true },
+  },
+  formOptions: {
+    schema: [{ component: 'Input', fieldName: 'keyword', label: '关键词' }],
+  },
+});
+```
+
+## API 参考
+
+### useVbenVxeGrid
+
+主要的表格组合式函数。
+
+```typescript
+const [Grid, gridApi] = useVbenVxeGrid<T>(options);
+```
+
+**参数：**
+
+- `gridOptions`: 表格配置（继承 vxe-table 所有配置）
+- `formOptions`: 表单配置（可选）
+- `gridEvents`: 表格事件（可选）
+- `tableTitle`: 表格标题（可选）
+- `tableTitleHelp`: 标题帮助提示（可选）
+- `showSearchForm`: 是否显示搜索表单（默认 true）
+- `separator`: 搜索表单分隔条配置（可选）
+
+**返回值：**
+
+- `Grid`: Vue 组件
+- `gridApi`: 表格 API 对象
+
+### gridApi 方法
+
+```typescript
+// 查询数据
+gridApi.query(params?: Record<string, any>);
+
+// 重新加载数据（返回第一页）
+gridApi.reload(params?: Record<string, any>);
+
+// 设置表格配置
+gridApi.setGridOptions(options: Partial<VxeGridProps['gridOptions']>);
+
+// 设置加载状态
+gridApi.setLoading(isLoading: boolean);
+
+// 切换搜索表单显示
+gridApi.toggleSearchForm(show?: boolean);
+
+// 获取表格实例
+gridApi.grid;  // VxeGridInstance
+
+// 获取表单 API
+gridApi.formApi;  // ExtendedFormApi
+```
+
+## 配置中心
+
+所有默认配置位于 `config/grid-config.ts`，可通过修改该文件调整全局默认配置。
+
+### 修改全局配置
+
+```typescript
+// apps/synapse/src/adapter/vxe-table.ts
+import { defaultGridConfig } from './vxe-table/config';
+
+// 修改配置
+setupVbenVxeTable({
+  configVxeTable: (vxeUI) => {
+    vxeUI.setConfig({
+      grid: {
+        ...defaultGridConfig,
+        // 覆盖默认配置
+        size: 'medium',
+        border: true,
+      },
+    });
+  },
+});
+```
+
+## 更多示例
+
+参考项目中的示例文件：
+
+- `playground/src/views/examples/vxe-table/` - 各种使用示例

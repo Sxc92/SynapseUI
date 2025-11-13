@@ -1,18 +1,17 @@
 import type { SetupVxeTable } from './types';
 
-import { defineComponent, watch } from 'vue';
+import { defineComponent, h, watch } from 'vue';
 
 import { usePreferences } from '@vben/preferences';
 
 import { useVbenForm } from '@vben-core/form-ui';
 
+import * as VxePcUi from 'vxe-pc-ui';
 import {
   VxeButton,
   VxeCheckbox,
 
   // VxeFormGather,
-  // VxeForm,
-  // VxeFormItem,
   VxeIcon,
   VxeInput,
   VxeLoading,
@@ -47,6 +46,10 @@ import {
 
 import { extendsDefaultFormatter } from './extends';
 
+// 尝试从 vxe-pc-ui 获取可能不存在的组件
+
+const VxeButtonGroup = (VxePcUi as any).VxeButtonGroup;
+
 // 是否加载过
 let isInit = false;
 
@@ -54,9 +57,13 @@ let isInit = false;
 export let useTableForm: typeof useVbenForm;
 
 // 部分组件，如果没注册，vxe-table 会报错，这里实际没用组件，只是为了不报错，同时可以减少打包体积
-const createVirtualComponent = (name = '') => {
+const _createVirtualComponent = (name = '') => {
   return defineComponent({
     name,
+    setup() {
+      // 返回一个隐藏的 div 虚拟节点，避免循环渲染错误
+      return () => h('div', { style: { display: 'none' } });
+    },
   });
 };
 
@@ -72,12 +79,15 @@ export function initVxeTable() {
   VxeUI.component(VxeToolbar);
 
   VxeUI.component(VxeButton);
-  // VxeUI.component(VxeButtonGroup);
+  // 注册 VxeButtonGroup，如果不存在则跳过注册（不注册可能导致错误，但不注册虚拟组件可能更安全）
+  if (VxeButtonGroup) {
+    VxeUI.component(VxeButtonGroup);
+  }
+  // 注意：如果 VxeButtonGroup 不存在，不注册虚拟组件，避免循环错误
   VxeUI.component(VxeCheckbox);
   // VxeUI.component(VxeCheckboxGroup);
-  VxeUI.component(createVirtualComponent('VxeForm'));
-  // VxeUI.component(VxeFormGather);
-  // VxeUI.component(VxeFormItem);
+  // 注意：VxeForm 和 VxeFormItem 不需要单独注册
+  // VxeGrid 内部会自动处理表单渲染，formConfig 配置即可
   VxeUI.component(VxeIcon);
   VxeUI.component(VxeInput);
   // VxeUI.component(VxeList);

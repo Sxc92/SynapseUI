@@ -1,3 +1,140 @@
+/* VxeTable 分页图标自定义样式 - 使用 Lucide 图标 */
+
+/* 通过 CSS 覆盖 VxeTable 默认图标字体，使用内联 SVG 实现更美观的图标 */
+
+/* 首页图标 - 使用 Lucide ChevronsLeft */
+.vxe-icon-pager-first-lucide {
+  font-family: inherit !important;
+  font-size: 0 !important;
+}
+
+.vxe-icon-pager-first-lucide::before {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  font-size: 14px;
+  vertical-align: middle;
+  content: '';
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m11 17-5-5 5-5'/%3E%3Cpath d='m18 17-5-5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* 向前跳转图标 - 使用 Lucide ChevronsLeft */
+.vxe-icon-pager-prev-jump-lucide {
+  font-family: inherit !important;
+  font-size: 0 !important;
+}
+
+.vxe-icon-pager-prev-jump-lucide::before {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  font-size: 14px;
+  vertical-align: middle;
+  content: '';
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m11 17-5-5 5-5'/%3E%3Cpath d='m18 17-5-5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* 上一页图标 - 使用 Lucide ChevronLeft */
+.vxe-icon-pager-prev-lucide {
+  font-family: inherit !important;
+  font-size: 0 !important;
+}
+
+.vxe-icon-pager-prev-lucide::before {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  font-size: 14px;
+  vertical-align: middle;
+  content: '';
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m15 18-6-6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* 下一页图标 - 使用 Lucide ChevronRight */
+.vxe-icon-pager-next-lucide {
+  font-family: inherit !important;
+  font-size: 0 !important;
+}
+
+.vxe-icon-pager-next-lucide::before {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  font-size: 14px;
+  vertical-align: middle;
+  content: '';
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* 向后跳转图标 - 使用 Lucide ChevronsRight */
+.vxe-icon-pager-next-jump-lucide {
+  font-family: inherit !important;
+  font-size: 0 !important;
+}
+
+.vxe-icon-pager-next-jump-lucide::before {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  font-size: 14px;
+  vertical-align: middle;
+  content: '';
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m13 17 5-5-5-5'/%3E%3Cpath d='m6 17 5-5-5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* 末页图标 - 使用 Lucide ChevronsRight */
+.vxe-icon-pager-last-lucide {
+  font-family: inherit !important;
+  font-size: 0 !important;
+}
+
+.vxe-icon-pager-last-lucide::before {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  font-size: 14px;
+  vertical-align: middle;
+  content: '';
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m13 17 5-5-5-5'/%3E%3Cpath d='m6 17 5-5-5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* 更多图标 - 使用 Lucide MoreHorizontal */
+.vxe-icon-pager-more-lucide {
+  font-family: inherit !important;
+  font-size: 0 !important;
+}
+
+.vxe-icon-pager-more-lucide::before {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  font-size: 14px;
+  vertical-align: middle;
+  content: '';
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='1'/%3E%3Ccircle cx='19' cy='12' r='1'/%3E%3Ccircle cx='5' cy='12' r='1'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
 :root .vxe-grid {
   --vxe-ui-font-color: hsl(var(--foreground));
   --vxe-ui-font-primary-color: hsl(var(--primary));

@@ -45,8 +45,13 @@ import { VxeGrid, VxeUI } from 'vxe-table';
 import { extendProxyOptions } from './extends';
 import { useTableForm } from './init';
 
+// 导入完整的样式文件（包含所有组件样式和图标字体）
+import 'vxe-table/lib/style.css';
+import 'vxe-pc-ui/lib/style.css';
+// 导入 CSS 变量文件（用于主题定制）
 import 'vxe-table/styles/cssvar.scss';
 import 'vxe-pc-ui/styles/cssvar.scss';
+// 导入自定义样式
 import './style.css';
 
 interface Props extends VxeGridProps {
@@ -213,6 +218,12 @@ const options = computed(() => {
       ...mobileLayouts,
       'End',
     ] as readonly string[];
+
+    // 只在用户没有提供 layouts 时才设置默认 layouts
+    const hasUserLayouts =
+      mergedOptions.pagerConfig.layouts &&
+      mergedOptions.pagerConfig.layouts.length > 0;
+
     mergedOptions.pagerConfig = mergeWithArrayOverride(
       {},
       mergedOptions.pagerConfig,
@@ -221,7 +232,10 @@ const options = computed(() => {
         background: true,
         pageSizes: [10, 20, 30, 50, 100, 200],
         className: 'mt-2 w-full',
-        layouts: isMobile.value ? mobileLayouts : layouts,
+        // 如果用户已经提供了 layouts，则保留用户的配置
+        ...(hasUserLayouts
+          ? {}
+          : { layouts: isMobile.value ? mobileLayouts : layouts }),
         size: 'mini' as const,
       },
     );
