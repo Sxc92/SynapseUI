@@ -56,14 +56,14 @@ export async function getMenuPage(
  */
 export async function addOrModifyMenu(
   data: MenuApi.Menu | Partial<MenuApi.Menu>,
-): Promise<{ code: string | number; msg: string; data?: any }> {
+): Promise<{ code: number | string; data?: any; msg: string }> {
   // 使用 fullResponseClient 获取完整响应（包括 code 和 msg）
   const response = await fullResponseClient.post<{
-    code: string | number;
-    msg: string;
+    code: number | string;
     data?: any;
+    msg: string;
   }>(`${IAM_API_PREFIX}/menu/addOrModify`, data);
-  
+
   // fullResponseClient 返回的是 AxiosResponse，需要提取 data
   return response;
 }
@@ -91,14 +91,14 @@ export async function getMenuDetail(
  */
 export async function deleteMenu(
   id: string,
-): Promise<{ code: string | number; msg: string; data?: any }> {
+): Promise<{ code: number | string; data?: any; msg: string }> {
   // 使用 fullResponseClient 获取完整响应（包括 code 和 msg）
   const response = await fullResponseClient.delete<{
-    code: string | number;
-    msg: string;
+    code: number | string;
     data?: any;
+    msg: string;
   }>(`${IAM_API_PREFIX}/menu/delete/${id}`);
-  
+
   // fullResponseClient 返回的是 AxiosResponse，需要提取 data
   return response;
 }
@@ -114,9 +114,7 @@ export async function getAllMenusApi() {
  * 获取菜单树（用于父菜单选择）
  * 返回树形结构的菜单列表
  */
-export async function getMenuTree(
-  systemId?: string,
-): Promise<MenuApi.Menu[]> {
+export async function getMenuTree(systemId?: string): Promise<MenuApi.Menu[]> {
   const params = systemId ? { systemId } : {};
   return requestClient.post<MenuApi.Menu[]>(
     `${IAM_API_PREFIX}/menu/tree`,

@@ -2,6 +2,8 @@ import type { VxeUIExport } from 'vxe-table';
 
 import { h } from 'vue';
 
+import { IconifyIcon } from '@vben/icons';
+
 import {
   Badge,
   Button,
@@ -12,8 +14,6 @@ import {
   Tag,
   Tooltip,
 } from 'ant-design-vue';
-
-import { IconifyIcon } from '@vben/icons';
 
 /**
  * 注册所有自定义渲染器
@@ -453,12 +453,13 @@ export function registerRenderers(vxeUI: VxeUIExport) {
 
       const canClick = checkPermission();
 
-      if (!statusMap || (cellValue === null || cellValue === undefined)) {
+      if (!statusMap || cellValue === null || cellValue === undefined) {
         return cellValue;
       }
 
       // 支持布尔值：将 true/false 转换为字符串键，也支持直接使用布尔值作为键
-      const key = typeof cellValue === 'boolean' ? String(cellValue) : cellValue;
+      const key =
+        typeof cellValue === 'boolean' ? String(cellValue) : cellValue;
       const statusInfo = statusMap[key] || statusMap[cellValue];
       if (!statusInfo) {
         return cellValue;
@@ -506,14 +507,18 @@ export function registerRenderers(vxeUI: VxeUIExport) {
                 },
               }),
               text
-                ? h('span', {
-                    style: {
-                      fontSize: '13px',
-                      fontWeight: 500,
-                      color: color || '#999',
-                      verticalAlign: 'middle',
+                ? h(
+                    'span',
+                    {
+                      style: {
+                        fontSize: '13px',
+                        fontWeight: 500,
+                        color: color || '#999',
+                        verticalAlign: 'middle',
+                      },
                     },
-                  }, text)
+                    text,
+                  )
                 : null,
               // 禁用图标提示
               h(IconifyIcon, {
@@ -555,7 +560,9 @@ export function registerRenderers(vxeUI: VxeUIExport) {
             title: '点击切换状态',
             onMouseenter: (e: MouseEvent) => {
               const target = e.currentTarget as HTMLElement;
-              const editIcon = target.querySelector('.status-edit-icon') as HTMLElement;
+              const editIcon = target.querySelector(
+                '.status-edit-icon',
+              ) as HTMLElement;
               target.style.backgroundColor = `${color || '#1890ff'}25`;
               target.style.boxShadow = `
                 inset 0 0 0 2px ${color || '#1890ff'},
@@ -570,7 +577,9 @@ export function registerRenderers(vxeUI: VxeUIExport) {
             },
             onMouseleave: (e: MouseEvent) => {
               const target = e.currentTarget as HTMLElement;
-              const editIcon = target.querySelector('.status-edit-icon') as HTMLElement;
+              const editIcon = target.querySelector(
+                '.status-edit-icon',
+              ) as HTMLElement;
               target.style.backgroundColor = `${color || '#f0f0f0'}15`;
               target.style.boxShadow = `inset 0 0 0 1px ${color || '#d9d9d9'}40`;
               target.style.transform = 'translateY(0)';
@@ -627,15 +636,19 @@ export function registerRenderers(vxeUI: VxeUIExport) {
               },
             }),
             text
-              ? h('span', {
-                  style: {
-                    fontSize: '13px',
-                    fontWeight: 600,
-                    color: color || '#666',
-                    verticalAlign: 'middle',
-                    letterSpacing: '0.3px',
+              ? h(
+                  'span',
+                  {
+                    style: {
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      color: color || '#666',
+                      verticalAlign: 'middle',
+                      letterSpacing: '0.3px',
+                    },
                   },
-                }, text)
+                  text,
+                )
               : null,
             // 添加切换提示图标，悬停时更明显
             h(IconifyIcon, {
@@ -675,9 +688,13 @@ export function registerRenderers(vxeUI: VxeUIExport) {
               },
             }),
             text
-              ? h('span', {
-                  style: { verticalAlign: 'middle' },
-                }, text)
+              ? h(
+                  'span',
+                  {
+                    style: { verticalAlign: 'middle' },
+                  },
+                  text,
+                )
               : null,
           ],
         );

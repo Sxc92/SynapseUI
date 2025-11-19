@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useVModel } from '@vueuse/core';
+
 import { X } from '@vben/icons';
+
+import { useVModel } from '@vueuse/core';
+
 import { cn } from '../utils';
 
 interface Props {
   /** 输入值 */
-  modelValue?: string | number;
+  modelValue?: number | string;
   /** 默认值 */
-  defaultValue?: string | number;
+  defaultValue?: number | string;
   /** 占位符 */
   placeholder?: string;
   /** 是否禁用 */
@@ -18,7 +21,7 @@ interface Props {
   /** 自定义类名 */
   class?: any;
   /** onChange 事件处理器（用于表单系统） */
-  onChange?: (value: string | number) => void;
+  onChange?: (value: number | string) => void;
   /** onClear 事件处理器（用于清除按钮） */
   onClear?: () => void;
 }
@@ -29,8 +32,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emits = defineEmits<{
-  (e: 'update:modelValue', value: string | number): void;
-  (e: 'change', value: string | number): void;
+  (e: 'update:modelValue', value: number | string): void;
+  (e: 'change', value: number | string): void;
   (e: 'clear'): void;
 }>();
 
@@ -41,7 +44,12 @@ const modelValue = useVModel(props, 'modelValue', emits, {
 
 // 是否显示清除按钮
 const showClear = computed(() => {
-  return props.allowClear && modelValue.value !== undefined && modelValue.value !== null && modelValue.value !== '';
+  return (
+    props.allowClear &&
+    modelValue.value !== undefined &&
+    modelValue.value !== null &&
+    modelValue.value !== ''
+  );
 });
 
 // 处理清除
@@ -76,7 +84,7 @@ function handleInput(event: Event) {
       :disabled="disabled"
       :class="
         cn(
-          'border-input bg-background ring-offset-background placeholder:text-muted-foreground/50 focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50',
+          'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
           allowClear && 'pr-8',
           props.class,
         )
@@ -101,4 +109,3 @@ input {
   --ring: var(--primary);
 }
 </style>
-

@@ -21,9 +21,9 @@ export { defaultGridConfig } from './grid-config';
 export { registerRenderers } from './renderers';
 export {
   createToolbarButtons,
-  type ToolbarButtonConfig,
-  type ProcessedToolbarButton,
   type CreateToolbarButtonsOptions,
+  type ProcessedToolbarButton,
+  type ToolbarButtonConfig,
 } from './toolbar-config';
 
 // 注意：formatNumber 是格式化器名称，不是函数，不需要导出

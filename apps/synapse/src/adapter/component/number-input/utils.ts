@@ -11,7 +11,7 @@
  * @returns 格式化后的字符串
  */
 export function formatNumber(
-  value: number | string | null | undefined,
+  value: null | number | string | undefined,
   locale: string = 'zh-CN',
   precision?: number,
 ): string {
@@ -19,7 +19,7 @@ export function formatNumber(
     return '';
   }
 
-  const numValue = typeof value === 'string' ? parseFloat(value) : value;
+  const numValue = typeof value === 'string' ? Number.parseFloat(value) : value;
 
   if (Number.isNaN(numValue)) {
     return String(value);
@@ -40,9 +40,7 @@ export function formatNumber(
  * @param formattedValue 格式化后的字符串，如 "1,234.56"
  * @returns 纯数字字符串，如 "1234.56"
  */
-export function parseFormattedNumber(
-  formattedValue: string,
-): string {
+export function parseFormattedNumber(formattedValue: string): string {
   if (!formattedValue) {
     return '';
   }
@@ -51,8 +49,8 @@ export function parseFormattedNumber(
   // 根据语言环境，可能需要处理不同的千分位分隔符
   // 常见分隔符：, . ' 空格
   return formattedValue
-    .replace(/[^\d.-]/g, '') // 移除所有非数字、非小数点、非负号的字符
-    .replace(/(\d+)-(\d+)/g, '$1-$2'); // 保留负号（如果存在）
+    .replaceAll(/[^\d.-]/g, '') // 移除所有非数字、非小数点、非负号的字符
+    .replaceAll(/(\d+)-(\d+)/g, '$1-$2'); // 保留负号（如果存在）
 }
 
 /**
@@ -75,4 +73,3 @@ export function validateNumberRange(
   }
   return true;
 }
-

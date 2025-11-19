@@ -1,15 +1,22 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
+
 import { useI18n } from '@vben/locales';
+
 import { useVModel } from '@vueuse/core';
+
 import { cn } from '../utils';
-import { formatNumber, parseFormattedNumber, validateNumberRange } from './utils';
+import {
+  formatNumber,
+  parseFormattedNumber,
+  validateNumberRange,
+} from './utils';
 
 interface Props {
   /** 输入值 */
-  modelValue?: string | number;
+  modelValue?: number | string;
   /** 默认值 */
-  defaultValue?: string | number;
+  defaultValue?: number | string;
   /** 小数位数 */
   precision?: number;
   /** 最小值 */
@@ -38,14 +45,16 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emits = defineEmits<{
-  (e: 'update:modelValue', value: string | number): void;
+  (e: 'update:modelValue', value: number | string): void;
   (e: 'blur'): void;
   (e: 'focus'): void;
-  (e: 'change', value: string | number): void;
+  (e: 'change', value: number | string): void;
 }>();
 
 const { locale: i18nLocale } = useI18n();
-const currentLocale = computed(() => props.locale || i18nLocale.value || 'zh-CN');
+const currentLocale = computed(
+  () => props.locale || i18nLocale.value || 'zh-CN',
+);
 
 // 内部输入值（显示格式化后的值）
 const displayValue = ref<string>('');
@@ -60,20 +69,29 @@ const actualValue = useVModel(props, 'modelValue', emits, {
 
 // 初始化显示值
 function initDisplayValue() {
-  if (actualValue.value === null || actualValue.value === undefined || actualValue.value === '') {
+  if (
+    actualValue.value === null ||
+    actualValue.value === undefined ||
+    actualValue.value === ''
+  ) {
     displayValue.value = '';
     return;
   }
 
-  const numValue = typeof actualValue.value === 'string' 
-    ? parseFloat(actualValue.value) 
-    : actualValue.value;
+  const numValue =
+    typeof actualValue.value === 'string'
+      ? Number.parseFloat(actualValue.value)
+      : actualValue.value;
 
-  if (!Number.isNaN(numValue)) {
-    const formatted = formatNumber(numValue, currentLocale.value, props.precision);
-    displayValue.value = props.prefix + formatted + props.suffix;
-  } else {
+  if (Number.isNaN(numValue)) {
     displayValue.value = String(actualValue.value);
+  } else {
+    const formatted = formatNumber(
+      numValue,
+      currentLocale.value,
+      props.precision,
+    );
+    displayValue.value = props.prefix + formatted + props.suffix;
   }
 }
 
@@ -102,31 +120,36 @@ function handleInput(event: Event) {
 
   // 解析为纯数字
   const parsed = parseFormattedNumber(inputValue);
-  
+
   if (parsed === '' || parsed === '-') {
     displayValue.value = props.prefix + parsed + props.suffix;
     return;
   }
 
-  const numValue = parseFloat(parsed);
-  
-  if (!Number.isNaN(numValue)) {
+  const numValue = Number.parseFloat(parsed);
+
+  if (Number.isNaN(numValue)) {
+    // 无效数字，保持输入（允许用户继续输入）
+    displayValue.value = props.prefix + inputValue + props.suffix;
+  } else {
     // 验证范围
     if (validateNumberRange(numValue, props.min, props.max)) {
       // 格式化显示
-      const formatted = formatNumber(numValue, currentLocale.value, props.precision);
+      const formatted = formatNumber(
+        numValue,
+        currentLocale.value,
+        props.precision,
+      );
       displayValue.value = props.prefix + formatted + props.suffix;
       // 更新实际值
-      actualValue.value = props.precision !== undefined 
-        ? parseFloat(numValue.toFixed(props.precision)) 
-        : numValue;
+      actualValue.value =
+        props.precision === undefined
+          ? numValue
+          : Number.parseFloat(numValue.toFixed(props.precision));
     } else {
       // 超出范围，恢复之前的值
       initDisplayValue();
     }
-  } else {
-    // 无效数字，保持输入（允许用户继续输入）
-    displayValue.value = props.prefix + inputValue + props.suffix;
   }
 }
 
@@ -145,7 +168,7 @@ function handleBlur(event: Event) {
   }
 
   const parsed = parseFormattedNumber(inputValue);
-  
+
   if (parsed === '' || parsed === '-') {
     actualValue.value = '';
     displayValue.value = '';
@@ -154,9 +177,12 @@ function handleBlur(event: Event) {
     return;
   }
 
-  const numValue = parseFloat(parsed);
-  
-  if (!Number.isNaN(numValue)) {
+  const numValue = Number.parseFloat(parsed);
+
+  if (Number.isNaN(numValue)) {
+    // 无效数字，恢复之前的值
+    initDisplayValue();
+  } else {
     // 应用范围限制
     let finalValue = numValue;
     if (props.min !== undefined && finalValue < props.min) {
@@ -168,19 +194,20 @@ function handleBlur(event: Event) {
 
     // 应用精度
     if (props.precision !== undefined) {
-      finalValue = parseFloat(finalValue.toFixed(props.precision));
+      finalValue = Number.parseFloat(finalValue.toFixed(props.precision));
     }
 
     // 格式化并更新
-    const formatted = formatNumber(finalValue, currentLocale.value, props.precision);
+    const formatted = formatNumber(
+      finalValue,
+      currentLocale.value,
+      props.precision,
+    );
     displayValue.value = props.prefix + formatted + props.suffix;
     actualValue.value = finalValue;
     emits('change', finalValue);
-  } else {
-    // 无效数字，恢复之前的值
-    initDisplayValue();
   }
-  
+
   emits('blur');
 }
 
@@ -208,7 +235,7 @@ function handleCompositionEnd(event: Event) {
     :disabled="disabled"
     :class="
       cn(
-        'border-input bg-background ring-offset-background placeholder:text-muted-foreground/50 focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50',
+        'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
         props.class,
       )
     "
@@ -227,4 +254,3 @@ input {
   --ring: var(--primary);
 }
 </style>
-

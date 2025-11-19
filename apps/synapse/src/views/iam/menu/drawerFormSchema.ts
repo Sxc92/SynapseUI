@@ -1,10 +1,11 @@
-import { getAllSystems } from '#/api/iam/system';
-import { getMenuTree } from '#/api/iam/menu';
-
 import type { MenuData } from './types';
-import { z } from '#/adapter/form';
+
 import type { DrawerFormMode } from '#/adapter/drawer-form';
 import type { VbenFormSchema } from '#/adapter/form';
+
+import { z } from '#/adapter/form';
+import { getMenuTree } from '#/api/iam/menu';
+import { getAllSystems } from '#/api/iam/system';
 
 import { convertMenuListToTree } from './utils';
 
@@ -37,7 +38,8 @@ export function drawerFormSchema(
       component: 'ApiTreeSelect',
       componentProps: (values: any) => {
         const systemId = values?.systemId;
-        const excludeId = mode === 'edit' && currentRow?.id ? currentRow.id : undefined;
+        const excludeId =
+          mode === 'edit' && currentRow?.id ? currentRow.id : undefined;
         return {
           api: async () => {
             if (!systemId) {
@@ -130,4 +132,3 @@ export function drawerFormSchema(
 
   return baseSchema;
 }
-

@@ -2,9 +2,9 @@
 import { ref, unref } from 'vue';
 
 import { createIconifyIcon } from '@vben/icons';
+import { getTimezoneOptions } from '@vben/layouts';
 import { $t } from '@vben/locales';
 import { useTimezoneStore } from '@vben/stores';
-import { getTimezoneOptions } from '@vben/layouts';
 
 import { useVbenModal } from '@vben-core/popup-ui';
 import {

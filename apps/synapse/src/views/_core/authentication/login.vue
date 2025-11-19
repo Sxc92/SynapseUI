@@ -14,7 +14,6 @@ defineOptions({ name: 'Login' });
 
 const authStore = useAuthStore();
 
-
 const formSchema = computed((): VbenFormSchema[] => {
   return [
     {

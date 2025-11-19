@@ -1,10 +1,10 @@
+import type { MenuData } from './types';
+
 import { ref } from 'vue';
 
 import { message } from 'ant-design-vue';
 
 import { deleteMenu } from '#/api/iam/menu';
-
-import type { MenuData } from './types';
 
 import { createClickableStatusColumn } from './statusColumn';
 
@@ -12,9 +12,9 @@ import { createClickableStatusColumn } from './statusColumn';
  * Drawer Form 实例类型
  */
 type DrawerFormInstance = {
-  openView: (row: MenuData) => void;
-  openEdit: (row: MenuData) => void;
   openCreate: () => void;
+  openEdit: (row: MenuData) => void;
+  openView: (row: MenuData) => void;
 };
 
 /**
@@ -35,7 +35,6 @@ export function createColumns(
   reloadRef: ReturnType<typeof ref<(() => void) | null>>,
   hasAccessByCodes: PermissionChecker,
 ) {
-
   return [
     {
       type: 'seq',
@@ -75,12 +74,12 @@ export function createColumns(
     createClickableStatusColumn(
       'status',
       {
-        'true': {
+        true: {
           icon: 'mdi:check-circle',
           color: '#52c41a',
           text: '启用',
         },
-        'false': {
+        false: {
           icon: 'mdi:close-circle',
           color: '#ff4d4f',
           text: '禁用',
@@ -95,12 +94,12 @@ export function createColumns(
     createClickableStatusColumn(
       'visible',
       {
-        'true': {
+        true: {
           icon: 'mdi:eye',
           color: '#1890ff',
           text: '显示',
         },
-        'false': {
+        false: {
           icon: 'mdi:eye-off',
           color: '#8c8c8c',
           text: '隐藏',
@@ -186,4 +185,3 @@ export function createColumns(
     },
   ];
 }
-

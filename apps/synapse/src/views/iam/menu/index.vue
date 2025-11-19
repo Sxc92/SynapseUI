@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { Page } from '@vben/common-ui';
-import { VbenButton } from '@vben/common-ui';
+import { Page, VbenButton } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 
 import { useMenuTable } from './menuTable';
-import { $t } from '@vben/locales';
 
 // 使用表格配置 Composable
 // 表格高度会根据每页条数自动调整（在 grid.ts 中处理）
@@ -36,4 +35,3 @@ const { Grid, drawerForm, toolbarButtons } = useMenuTable();
 </template>
 
 <style scoped></style>
-

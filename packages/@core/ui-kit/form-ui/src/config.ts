@@ -89,7 +89,9 @@ export function setupVbenForm<
   // 处理 COMPONENT_MAP 中已存在的组件（如 VbenSelect），确保它们的 modelPropName 也被设置
   // 优先处理 modelPropNameMap 中的特殊组件映射（覆盖之前的设置）
   if (modelPropNameMap) {
-    for (const key of Object.keys(modelPropNameMap) as BaseFormComponentType[]) {
+    for (const key of Object.keys(
+      modelPropNameMap,
+    ) as BaseFormComponentType[]) {
       COMPONENT_BIND_EVENT_MAP[key] = modelPropNameMap[key];
     }
   }

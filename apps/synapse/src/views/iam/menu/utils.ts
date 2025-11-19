@@ -9,7 +9,7 @@ import type { MenuData } from './types';
 export function convertMenuListToTree(
   menus: MenuData[],
   excludeId?: string,
-): Array<{ label: string; value: string; children?: any[] }> {
+): Array<{ children?: any[]; label: string; value: string }> {
   // 过滤掉要排除的菜单及其子菜单
   const filteredMenus = excludeId
     ? menus.filter((menu) => {
@@ -45,4 +45,3 @@ export function convertMenuListToTree(
 
   return rootMenus;
 }
-

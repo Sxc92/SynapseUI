@@ -17,4 +17,3 @@ const { Grid } = useUserTable();
 </template>
 
 <style scoped></style>
-

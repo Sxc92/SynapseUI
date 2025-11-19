@@ -1,22 +1,21 @@
+import type { MenuData } from './types';
+
+import type { ToolbarButtonConfig } from '#/adapter/vxe-table/config';
+
 import { ref } from 'vue';
 
 import { useAccess } from '@vben/access';
 import { Plus } from '@vben/icons';
 
-import { createGrid } from '#/adapter/vxe-table';
-import {
-  createToolbarButtons,
-  type ToolbarButtonConfig,
-} from '#/adapter/vxe-table/config';
 import { createDrawerForm } from '#/adapter/drawer-form';
+import { createGrid } from '#/adapter/vxe-table';
+import { createToolbarButtons } from '#/adapter/vxe-table/config';
 import { addOrModifyMenu, getMenuDetail, getMenuPage } from '#/api/iam/menu';
 
-import { gridConfig } from './gridConfig';
-import type { MenuData } from './types';
-
-import { formOptions } from './formOptions';
-import { drawerFormSchema } from './drawerFormSchema';
 import { createColumns } from './columns';
+import { drawerFormSchema } from './drawerFormSchema';
+import { formOptions } from './formOptions';
+import { gridConfig } from './gridConfig';
 
 // 图标映射表：将配置中的图标名称映射到实际的图标组件
 const iconMap: Record<string, any> = {
@@ -85,7 +84,8 @@ export function useMenuTable() {
     },
     // 使用 gridConfig.ts 中的配置
     gridProps: gridConfig,
-    columns: () => createColumns(drawerForm, gridApiRef, reloadRef, hasAccessByCodes),
+    columns: () =>
+      createColumns(drawerForm, gridApiRef, reloadRef, hasAccessByCodes),
   });
 
   // 存储 reload 函数和 API
@@ -143,4 +143,3 @@ export function useMenuTable() {
     setLoading: result.setLoading,
   };
 }
-

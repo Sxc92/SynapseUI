@@ -3,7 +3,10 @@
  * 支持国际化日期格式化
  */
 
-import dayjs, { type Dayjs } from 'dayjs';
+import type { Dayjs } from 'dayjs';
+
+import dayjs from 'dayjs';
+
 import 'dayjs/locale/zh-cn';
 import 'dayjs/locale/en';
 
@@ -16,9 +19,9 @@ export function getDayjsLocale(locale: string): string {
   // 将 'zh-CN' 转换为 'zh-cn'，'en-US' 转换为 'en'
   const localeMap: Record<string, string> = {
     'zh-CN': 'zh-cn',
-    'zh': 'zh-cn',
+    zh: 'zh-cn',
     'en-US': 'en',
-    'en': 'en',
+    en: 'en',
   };
 
   return localeMap[locale] || locale.toLowerCase();
@@ -30,7 +33,10 @@ export function getDayjsLocale(locale: string): string {
  * @param showTime 是否显示时间
  * @returns 日期格式字符串
  */
-export function getDefaultDateFormat(locale: string, showTime: boolean = false): string {
+export function getDefaultDateFormat(
+  locale: string,
+  showTime: boolean = false,
+): string {
   if (locale.startsWith('zh')) {
     return showTime ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD';
   } else {
@@ -46,7 +52,7 @@ export function getDefaultDateFormat(locale: string, showTime: boolean = false):
  * @returns 格式化后的字符串
  */
 export function formatDate(
-  date: string | Date | Dayjs | null | undefined,
+  date: Date | Dayjs | null | string | undefined,
   format?: string,
   locale: string = 'zh-CN',
 ): string {
@@ -56,7 +62,7 @@ export function formatDate(
 
   const dayjsLocale = getDayjsLocale(locale);
   const dateObj = dayjs.isDayjs(date) ? date : dayjs(date);
-  
+
   if (!dateObj.isValid()) {
     return '';
   }
@@ -84,7 +90,7 @@ export function parseDate(
   const dayjsLocale = getDayjsLocale(locale);
   const formatStr = format || getDefaultDateFormat(locale);
   const dateObj = dayjs(dateString, formatStr).locale(dayjsLocale);
-  
+
   return dateObj.isValid() ? dateObj : null;
 }
 
@@ -97,7 +103,7 @@ export function parseDate(
  * @returns 格式化后的字符串
  */
 export function formatDateRange(
-  dates: [string | Date | Dayjs | null, string | Date | Dayjs | null] | null,
+  dates: [Date | Dayjs | null | string, Date | Dayjs | null | string] | null,
   format?: string,
   locale: string = 'zh-CN',
   separator: string = ' ~ ',
@@ -108,7 +114,6 @@ export function formatDateRange(
 
   const start = formatDate(dates[0], format, locale);
   const end = formatDate(dates[1], format, locale);
-  
+
   return `${start}${separator}${end}`;
 }
-

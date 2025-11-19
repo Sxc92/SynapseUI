@@ -55,7 +55,7 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
         // 直接清理状态并跳转，不调用需要认证的 logout API，避免无限循环
         resetAllStores();
         accessStore.setLoginExpired(false);
-        
+
         // 跳转到登录页
         const router = useRouter();
         await router.replace({
@@ -118,8 +118,14 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
       const responseData = error?.response?.data ?? error?.data;
       // 检查业务码是否表示 token 失效（常见的业务码：401, '401', 'UNAUTHORIZED', 'TOKEN_EXPIRED' 等）
       // 根据实际后端返回的业务码进行调整
-      const tokenExpiredCodes = [401, '401', 'UNAUTHORIZED', 'TOKEN_EXPIRED', 'TOKEN_INVALID'];
-      
+      const tokenExpiredCodes = [
+        401,
+        '401',
+        'UNAUTHORIZED',
+        'TOKEN_EXPIRED',
+        'TOKEN_INVALID',
+      ];
+
       if (
         responseData &&
         typeof responseData === 'object' &&

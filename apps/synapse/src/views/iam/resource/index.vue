@@ -18,4 +18,3 @@ import { Page } from '@vben/common-ui';
 </template>
 
 <style scoped></style>
-

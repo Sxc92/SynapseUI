@@ -1,20 +1,21 @@
 import { computed, onMounted, ref, unref, watch } from 'vue';
 
+import { getLocationByTimezone } from '@vben/layouts';
+import { useI18n } from '@vben/locales';
+import { useTimezoneStore } from '@vben/stores';
+
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
-import 'dayjs/locale/zh-cn';
-import 'dayjs/locale/en';
 
 import { $t } from '#/locales';
-import { useI18n } from '@vben/locales';
-import { useTimezoneStore } from '@vben/stores';
+
+import 'dayjs/locale/zh-cn';
+import 'dayjs/locale/en';
 
 // 启用 dayjs 时区插件
 dayjs.extend(utc);
 dayjs.extend(timezone);
-
-import { getLocationByTimezone } from '@vben/layouts';
 
 // 天气代码到翻译键的映射（Open-Meteo 使用 WMO 天气代码）
 const weatherCodeToKey: Record<number, string> = {
@@ -80,9 +81,9 @@ function getDateFormatByLocale(locale: string): string {
 function getDayjsLocale(locale: string): string {
   const localeMap: Record<string, string> = {
     'zh-CN': 'zh-cn',
-    'zh': 'zh-cn',
+    zh: 'zh-cn',
     'en-US': 'en',
-    'en': 'en',
+    en: 'en',
   };
   return localeMap[locale] || locale.toLowerCase();
 }
@@ -95,7 +96,7 @@ export function useWorkspace() {
   const timezoneStore = useTimezoneStore();
   const { locale: i18nLocale } = useI18n();
 
-  const weatherInfo = ref<WeatherInfo | null>(null);
+  const weatherInfo = ref<null | WeatherInfo>(null);
   const loading = ref(false);
 
   /**
@@ -156,11 +157,8 @@ export function useWorkspace() {
     const currentLocale = unref(i18nLocale) || 'zh-CN';
     const dateFormat = getDateFormatByLocale(currentLocale);
     const dayjsLocale = getDayjsLocale(currentLocale);
-    
-    return dayjs()
-      .tz(currentTimezone)
-      .locale(dayjsLocale)
-      .format(dateFormat);
+
+    return dayjs().tz(currentTimezone).locale(dayjsLocale).format(dateFormat);
   });
 
   /**
@@ -220,4 +218,3 @@ export function useWorkspace() {
     fetchWeather,
   };
 }
-

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { watch } from 'vue';
+
 import { CircleX } from '@vben-core/icons';
 
 import {
@@ -13,23 +14,23 @@ import {
 interface Props {
   allowClear?: boolean;
   class?: any;
-  options?: Array<{ label: string; value: string }>;
-  placeholder?: string;
   /** onChange 事件处理器（用于表单系统） */
   onChange?: (value: string | undefined) => void;
   /** onClear 事件处理器（用于清除按钮） */
   onClear?: () => void;
+  options?: Array<{ label: string; value: string }>;
+  placeholder?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   allowClear: false,
 });
 
-const modelValue = defineModel<string>();
-
 const emits = defineEmits<{
   (e: 'clear'): void;
 }>();
+
+const modelValue = defineModel<string>();
 
 // 监听 modelValue 变化，触发 onChange
 watch(

@@ -43,15 +43,15 @@ export async function getPage(
  * 使用 fullResponseClient 返回完整的响应对象（包括 code 和 msg）
  */
 export async function addOrModifySystem(
-  data: SystemApi.System | Partial<SystemApi.System>,
-): Promise<{ code: string | number; msg: string; data?: any }> {
+  data: Partial<SystemApi.System> | SystemApi.System,
+): Promise<{ code: number | string; data?: any; msg: string }> {
   // 使用 fullResponseClient 获取完整响应（包括 code 和 msg）
   const response = await fullResponseClient.post<{
-    code: string | number;
-    msg: string;
+    code: number | string;
     data?: any;
+    msg: string;
   }>(`${IAM_API_PREFIX}/system/addOrModify`, data);
-  
+
   // fullResponseClient 返回的是 AxiosResponse，需要提取 data
   return response;
 }
@@ -79,14 +79,14 @@ export async function getSystemDetail(
  */
 export async function deleteSystem(
   id: string,
-): Promise<{ code: string | number; msg: string; data?: any }> {
+): Promise<{ code: number | string; data?: any; msg: string }> {
   // 使用 fullResponseClient 获取完整响应（包括 code 和 msg）
   const response = await fullResponseClient.delete<{
-    code: string | number;
-    msg: string;
+    code: number | string;
     data?: any;
+    msg: string;
   }>(`${IAM_API_PREFIX}/system/delete/${id}`);
-  
+
   // fullResponseClient 返回的是 AxiosResponse，需要提取 data
   return response;
 }
@@ -96,9 +96,11 @@ export async function deleteSystem(
  * 返回启用状态的系统列表
  */
 export async function getAllSystems(): Promise<SystemApi.System[]> {
-  return requestClient.post<SystemApi.SystemPageResult>(
-    `${IAM_API_PREFIX}/system/page`,
-    { status: true, pageSize: 1000, pageNum: 1 },
-  ).then((res) => res.records || []);
+  return requestClient
+    .post<SystemApi.SystemPageResult>(`${IAM_API_PREFIX}/system/page`, {
+      status: true,
+      pageSize: 1000,
+      pageNum: 1,
+    })
+    .then((res) => res.records || []);
 }
-

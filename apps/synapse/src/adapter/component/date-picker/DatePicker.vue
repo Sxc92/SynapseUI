@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { useI18n } from '@vben/locales';
-import { useVModel } from '@vueuse/core';
-import { cn } from '../utils';
 import type { Dayjs } from 'dayjs';
+
+import { computed, ref, watch } from 'vue';
+
+import { useI18n } from '@vben/locales';
+
+import { useVModel } from '@vueuse/core';
 import { DatePicker as AntDatePicker } from 'ant-design-vue';
+
+import { cn } from '../utils';
 import { formatDate, getDefaultDateFormat } from './utils';
 
-type DateValue = string | Date | Dayjs | null | undefined;
+type DateValue = Date | Dayjs | null | string | undefined;
 type RangeValue = [DateValue, DateValue] | null;
 
 interface Props {
@@ -56,9 +60,12 @@ const emits = defineEmits<{
 }>();
 
 const { locale: i18nLocale } = useI18n();
-const currentLocale = computed(() => props.locale || i18nLocale.value || 'zh-CN');
-const dateFormat = computed(() => 
-  props.format || getDefaultDateFormat(currentLocale.value, props.showTime)
+const currentLocale = computed(
+  () => props.locale || i18nLocale.value || 'zh-CN',
+);
+const dateFormat = computed(
+  () =>
+    props.format || getDefaultDateFormat(currentLocale.value, props.showTime),
 );
 
 // 单个日期值
@@ -89,11 +96,9 @@ function initDisplayValue() {
     }
   } else {
     // 单个日期模式
-    if (singleValue.value) {
-      displayValue.value = formatDate(singleValue.value, dateFormat.value, currentLocale.value);
-    } else {
-      displayValue.value = '';
-    }
+    displayValue.value = singleValue.value
+      ? formatDate(singleValue.value, dateFormat.value, currentLocale.value)
+      : '';
   }
 }
 
@@ -103,7 +108,7 @@ watch(() => rangeValueModel.value, initDisplayValue, { immediate: true });
 watch(() => [dateFormat.value, currentLocale.value], initDisplayValue);
 
 // 处理日期选择（单个）
-function handleSingleChange(value: string | Dayjs, _dateString: string) {
+function handleSingleChange(value: Dayjs | string, _dateString: string) {
   // v-model:value 会自动更新 singleValue，这里只需要触发 change 事件
   const date = typeof value === 'string' ? null : value;
   emits('change', date);
@@ -111,7 +116,7 @@ function handleSingleChange(value: string | Dayjs, _dateString: string) {
 
 // 处理日期范围选择
 function handleRangeChange(
-  value: [string, string] | [Dayjs, Dayjs] | null,
+  value: [Dayjs, Dayjs] | [string, string] | null,
   _dateString: [string, string],
 ) {
   // v-model:value 会自动更新 rangeValueModel，这里只需要触发 change 事件
@@ -163,4 +168,3 @@ const datePickerProps = computed(() => {
     @change="handleRangeChange"
   />
 </template>
-

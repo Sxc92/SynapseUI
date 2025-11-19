@@ -8,4 +8,3 @@ export interface SystemData {
   status: boolean;
   sorted: number;
 }
-

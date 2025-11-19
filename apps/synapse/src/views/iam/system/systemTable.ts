@@ -1,28 +1,29 @@
+import type { SystemData } from './types';
+
+import type { DrawerFormMode } from '#/adapter/drawer-form';
+import type { VbenFormSchema } from '#/adapter/form';
+import type { ToolbarButtonConfig } from '#/adapter/vxe-table/config';
+
 import { ref } from 'vue';
 
 import { useAccess } from '@vben/access';
 import { Plus } from '@vben/icons';
+import { $t } from '@vben/locales';
+
 import { message } from 'ant-design-vue';
 
-import { createGrid } from '#/adapter/vxe-table';
-import {
-  createToolbarButtons,
-  type ToolbarButtonConfig,
-} from '#/adapter/vxe-table/config';
 import { createDrawerForm } from '#/adapter/drawer-form';
+import { z } from '#/adapter/form';
+import { createGrid } from '#/adapter/vxe-table';
+import { createToolbarButtons } from '#/adapter/vxe-table/config';
 import {
   addOrModifySystem,
-  getSystemDetail,
-  getPage,
   deleteSystem,
+  getPage,
+  getSystemDetail,
 } from '#/api/iam/system';
 
 import { gridConfig } from './gridConfig';
-import type { SystemData } from './types';
-import { z } from '#/adapter/form';
-import { $t } from '@vben/locales';
-import type { DrawerFormMode } from '#/adapter/drawer-form';
-import type { VbenFormSchema } from '#/adapter/form';
 
 // 图标映射表：将配置中的图标名称映射到实际的图标组件
 const iconMap: Record<string, any> = {
@@ -218,12 +219,12 @@ export function useSystemTable() {
           name: 'CellStatusIcon',
           props: {
             statusMap: {
-              'true': {
+              true: {
                 icon: 'mdi:check-circle',
                 color: '#52c41a',
                 text: '启用',
               },
-              'false': {
+              false: {
                 icon: 'mdi:close-circle',
                 color: '#ff4d4f',
                 text: '禁用',
@@ -348,4 +349,3 @@ export function useSystemTable() {
     setLoading: result.setLoading,
   };
 }
-

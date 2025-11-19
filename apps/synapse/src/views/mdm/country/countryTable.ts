@@ -1,7 +1,12 @@
+import type { CountryData } from './types';
+
 import { ref } from 'vue';
 
-import { createGrid } from '#/adapter/vxe-table';
+import { $t } from '@vben/locales';
+
 import { createDrawerForm } from '#/adapter/drawer-form';
+import { z } from '#/adapter/form';
+import { createGrid } from '#/adapter/vxe-table';
 import {
   addOrModifyCountry,
   getCountryDetail,
@@ -9,9 +14,6 @@ import {
 } from '#/api/mdm/geographicApi';
 
 import { gridConfig } from './gridConfig';
-import type { CountryData } from './types';
-import { z } from '#/adapter/form';
-import { $t } from '@vben/locales';
 // 注意：formatNumber 是格式化器名称（字符串），不需要导入函数
 // 在列配置中使用 formatter: 'formatNumber' 即可
 
@@ -292,7 +294,6 @@ export const mockCountryData: CountryData[] = [
   },
 ];
 
-
 /**
  * 搜索表单配置
  */
@@ -515,7 +516,6 @@ export function useCountryTable() {
 
   // 存储 reload 函数
   reloadRef.value = result.reload;
-
 
   // 获取选中记录
   function getSelectedRows(): CountryData[] {

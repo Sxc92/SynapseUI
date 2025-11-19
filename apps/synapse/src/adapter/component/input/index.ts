@@ -1,4 +1,1 @@
-import Input from './Input.vue';
-
-export { Input as SynapseInput };
-
+export { default as SynapseInput } from './Input.vue';

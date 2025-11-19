@@ -3,7 +3,14 @@
  * 类名合并工具函数
  */
 
-type ClassValue = string | number | boolean | undefined | null | Record<string, boolean> | ClassValue[];
+type ClassValue =
+  | boolean
+  | ClassValue[]
+  | null
+  | number
+  | Record<string, boolean>
+  | string
+  | undefined;
 
 /**
  * 合并类名工具函数
@@ -33,4 +40,3 @@ export function cn(...inputs: ClassValue[]): string {
 
   return classes.join(' ');
 }
-

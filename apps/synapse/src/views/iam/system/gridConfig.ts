@@ -47,4 +47,3 @@ export const gridConfig: Partial<VxeGridProps<SystemData>> = {
     resizable: false, // 禁用行高调整，避免频繁重排
   },
 };
-

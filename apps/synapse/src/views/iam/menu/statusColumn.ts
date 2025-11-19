@@ -1,12 +1,12 @@
-import { ref } from 'vue';
+import type { MenuData } from './types';
 
-import { message } from 'ant-design-vue';
+import { ref } from 'vue';
 
 import { useAccess } from '@vben/access';
 
-import { addOrModifyMenu } from '#/api/iam/menu';
+import { message } from 'ant-design-vue';
 
-import type { MenuData } from './types';
+import { addOrModifyMenu } from '#/api/iam/menu';
 
 /**
  * 创建可点击的状态字段配置
@@ -19,7 +19,7 @@ import type { MenuData } from './types';
  */
 export function createClickableStatusColumn(
   field: string,
-  statusMap: Record<string, { icon: string; color: string; text: string }>,
+  statusMap: Record<string, { color: string; icon: string; text: string }>,
   permissionKey: string | undefined,
   successMessage: string | undefined,
   gridApiRef: ReturnType<typeof ref<any>>,
@@ -43,7 +43,11 @@ export function createClickableStatusColumn(
           // 使用权限码检查用户是否有权限
           return hasAccessByCodes([permissionKey]);
         },
-        onClick: async (row: MenuData, fieldName: string, newValue: boolean) => {
+        onClick: async (
+          row: MenuData,
+          fieldName: string,
+          newValue: boolean,
+        ) => {
           try {
             if (gridApiRef.value) {
               gridApiRef.value.setLoading(true);
@@ -53,13 +57,19 @@ export function createClickableStatusColumn(
               [fieldName]: newValue,
             } as any);
             if (response.code === 200 || response.code === 'SUCCESS') {
-              message.success(successMessage || `${field === 'status' ? '状态' : '可见性'}更新成功`);
+              message.success(
+                successMessage ||
+                  `${field === 'status' ? '状态' : '可见性'}更新成功`,
+              );
               (row as any)[fieldName] = newValue;
               if (reloadRef.value) {
                 reloadRef.value();
               }
             } else {
-              message.error(response.msg || `${field === 'status' ? '状态' : '可见性'}更新失败`);
+              message.error(
+                response.msg ||
+                  `${field === 'status' ? '状态' : '可见性'}更新失败`,
+              );
             }
           } catch (error) {
             message.error(`${field === 'status' ? '状态' : '可见性'}更新失败`);
@@ -74,4 +84,3 @@ export function createClickableStatusColumn(
     },
   };
 }
-

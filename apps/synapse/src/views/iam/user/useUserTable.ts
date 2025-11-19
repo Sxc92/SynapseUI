@@ -119,12 +119,12 @@ export function useUserTable() {
           name: 'CellStatusIcon',
           props: {
             statusMap: {
-              'true': {
+              true: {
                 icon: 'mdi:check-circle',
                 color: '#52c41a',
                 text: '启用',
               },
-              'false': {
+              false: {
                 icon: 'mdi:close-circle',
                 color: '#ff4d4f',
                 text: '禁用',
@@ -167,4 +167,3 @@ export function useUserTable() {
     setLoading: result.setLoading,
   };
 }
-

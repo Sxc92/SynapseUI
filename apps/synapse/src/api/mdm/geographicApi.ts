@@ -48,15 +48,15 @@ export async function getPage(
  */
 export async function addOrModifyCountry(
   data: GeographicApi.Country | Partial<GeographicApi.Country>,
-): Promise<{ code: string | number; msg: string; data?: any }> {
+): Promise<{ code: number | string; data?: any; msg: string }> {
   // 使用 fullResponseClient 获取完整响应（包括 code 和 msg）
   // fullResponseClient 配置了 responseReturn: 'body'，返回完整的响应对象
   const response = await fullResponseClient.post<{
-    code: string | number;
-    msg: string;
+    code: number | string;
     data?: any;
+    msg: string;
   }>(`${MDM_API_PREFIX}/${GEOGRAPHIC_API_PREFIX}/country/addOrModify`, data);
-  
+
   // fullResponseClient 返回的是 AxiosResponse，需要提取 data
   return response;
 }

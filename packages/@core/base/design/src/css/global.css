@@ -169,10 +169,10 @@ html.grayscale-mode {
   [disabled] {
     font-weight: 700 !important; /* 黑体加粗 */
     color: hsl(var(--foreground)) !important; /* 高亮：使用前景色 */
-    opacity: 1 !important;
-    background-color: hsl(var(--muted) / 0.6) !important;
+    background-color: hsl(var(--muted) / 60%) !important;
     border-color: hsl(var(--border)) !important;
     border-width: 1.5px !important;
+    opacity: 1 !important;
   }
 
   /* Ant Design Vue 组件的 disabled 状态 */
@@ -193,10 +193,10 @@ html.grayscale-mode {
   .ant-rate-disabled {
     font-weight: 700 !important; /* 黑体加粗 */
     color: hsl(var(--foreground)) !important; /* 高亮：使用前景色 */
-    opacity: 1 !important;
-    background-color: hsl(var(--muted) / 0.6) !important;
+    background-color: hsl(var(--muted) / 60%) !important;
     border-color: hsl(var(--border)) !important;
     border-width: 1.5px !important;
+    opacity: 1 !important;
   }
 
   /* Ant Design Vue 组件内部文本的 disabled 状态 */
@@ -220,9 +220,9 @@ html.grayscale-mode {
   .vxe-select[disabled] {
     font-weight: 700 !important; /* 黑体加粗 */
     color: hsl(var(--foreground)) !important; /* 高亮：使用前景色 */
-    opacity: 1 !important;
-    background-color: hsl(var(--muted) / 0.6) !important;
+    background-color: hsl(var(--muted) / 60%) !important;
     border-color: hsl(var(--border)) !important;
     border-width: 1.5px !important;
+    opacity: 1 !important;
   }
 }

@@ -8,7 +8,7 @@ export const timezoneToLocation: Record<
 > = {
   'America/New_York': {
     latitude: 40.7128,
-    longitude: -74.0060,
+    longitude: -74.006,
     nameKey: 'workspace.cities.New_York',
   },
   'Europe/London': {
@@ -28,7 +28,7 @@ export const timezoneToLocation: Record<
   },
   'Asia/Seoul': {
     latitude: 37.5665,
-    longitude: 126.9780,
+    longitude: 126.978,
     nameKey: 'workspace.cities.Seoul',
   },
   'America/Los_Angeles': {
@@ -47,8 +47,8 @@ export const timezoneToLocation: Record<
     nameKey: 'workspace.cities.Paris',
   },
   'Europe/Berlin': {
-    latitude: 52.5200,
-    longitude: 13.4050,
+    latitude: 52.52,
+    longitude: 13.405,
     nameKey: 'workspace.cities.Berlin',
   },
   'Asia/Hong_Kong': {
@@ -82,7 +82,7 @@ export const timezoneToLocation: Record<
     nameKey: 'workspace.cities.Dubai',
   },
   'Asia/Mumbai': {
-    latitude: 19.0760,
+    latitude: 19.076,
     longitude: 72.8777,
     nameKey: 'workspace.cities.Mumbai',
   },
@@ -147,7 +147,7 @@ export function getTimezoneOptions($t: (key: string) => string): {
       }
       // 使用国际化翻译城市名称
       const cityName = $t(location.nameKey);
-      
+
       // 返回格式：城市名称 (时区)
       // 注意：GMT 偏移量可以在使用时通过 dayjs 动态计算，这里只显示时区名称
       return {
@@ -158,4 +158,3 @@ export function getTimezoneOptions($t: (key: string) => string): {
     .filter((item): item is { label: string; value: string } => item !== null)
     .sort((a, b) => a.label.localeCompare(b.label));
 }
-

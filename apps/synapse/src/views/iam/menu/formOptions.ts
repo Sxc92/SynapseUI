@@ -94,4 +94,3 @@ export const formOptions = () => ({
   ],
   collapseTriggerResize: false,
 });
-

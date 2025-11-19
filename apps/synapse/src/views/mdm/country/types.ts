@@ -11,4 +11,3 @@ export interface CountryData {
   area?: number;
   capital?: string;
 }
-

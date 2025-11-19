@@ -4,11 +4,13 @@ import type { VbenFormSchema } from './form';
 
 import { computed, defineComponent, h, reactive, ref, unref, watch } from 'vue';
 
-import { useVbenForm } from './form';
-import { $t } from '#/locales';
+import { useVbenDrawer } from '@vben/common-ui';
+
 import { message } from 'ant-design-vue';
 
-import { useVbenDrawer } from '@vben/common-ui';
+import { $t } from '#/locales';
+
+import { useVbenForm } from './form';
 
 /**
  * 操作模式
@@ -41,13 +43,15 @@ export interface DrawerFormOptions<T = any> {
     view?: string;
   };
   /** 表单配置 */
-  formSchema: VbenFormSchema[] | ((mode: DrawerFormMode, row?: T) => VbenFormSchema[]);
+  formSchema:
+    | ((mode: DrawerFormMode, row?: T) => VbenFormSchema[])
+    | VbenFormSchema[];
   /** API 方法 */
   api: DrawerFormApiMethods;
   /** 抽屉宽度 */
-  width?: string | number;
+  width?: number | string;
   /** 抽屉位置 */
-  placement?: 'left' | 'right' | 'top' | 'bottom';
+  placement?: 'bottom' | 'left' | 'right' | 'top';
   /** 提交成功后的回调 */
   onSuccess?: (mode: DrawerFormMode, data: Recordable<any>) => void;
   /** 提交失败后的回调 */
@@ -95,7 +99,7 @@ export function createDrawerForm<T = any>(
   // 当前模式
   const mode = ref<DrawerFormMode>('create');
   // 当前行数据
-  const currentRow = ref<Recordable<any> | null>(null);
+  const currentRow = ref<null | Recordable<any>>(null);
   // 是否正在加载
   const loading = ref(false);
   // 是否显示抽屉
@@ -105,26 +109,29 @@ export function createDrawerForm<T = any>(
   const drawerTitle = computed(() => {
     const titles = options.title || {};
     switch (mode.value) {
-      case 'create':
+      case 'create': {
         return titles.create || $t('confirm');
-      case 'edit':
+      }
+      case 'edit': {
         return titles.edit || $t('common.edit');
-      case 'view':
+      }
+      case 'view': {
         return titles.view || $t('common.view');
-      default:
+      }
+      default: {
         return '';
+      }
     }
   });
 
   // 计算表单配置
   const formSchema = computed(() => {
     let schema: any[];
-    if (typeof options.formSchema === 'function') {
-      schema = options.formSchema(mode.value, currentRow.value as T);
-    } else {
-      schema = options.formSchema;
-    }
-    
+    schema =
+      typeof options.formSchema === 'function'
+        ? options.formSchema(mode.value, currentRow.value as T)
+        : options.formSchema;
+
     // 在查看模式下，为所有字段添加 disabled 属性
     if (mode.value === 'view') {
       return schema.map((field: any) => {
@@ -150,7 +157,7 @@ export function createDrawerForm<T = any>(
         return newField;
       });
     }
-    
+
     return schema;
   });
 
@@ -196,7 +203,11 @@ export function createDrawerForm<T = any>(
 
       if (mode.value === 'create' && options.api.create) {
         result = await options.api.create(values);
-      } else if (mode.value === 'edit' && options.api.update && currentRow.value) {
+      } else if (
+        mode.value === 'edit' &&
+        options.api.update &&
+        currentRow.value
+      ) {
         result = await options.api.update(currentRow.value.id, values);
       } else {
         throw new Error('API method not provided');
@@ -227,7 +238,11 @@ export function createDrawerForm<T = any>(
       }
     } catch (error: any) {
       console.error('提交失败:', error);
-      const errorMsg = error?.response?.data?.msg || error?.msg || error?.message || $t('common.error');
+      const errorMsg =
+        error?.response?.data?.msg ||
+        error?.msg ||
+        error?.message ||
+        $t('common.error');
       message.error(errorMsg);
       options.onError?.(error);
     } finally {
@@ -244,18 +259,19 @@ export function createDrawerForm<T = any>(
     loading.value = true;
     try {
       const result = await options.api.getDetail(id);
-      
+
       // 只需要判断是否为空，如果不为空就是需要返回的数据
       if (!result) {
         message.error($t('common.queryFailed'));
         return;
       }
-      
+
       // 如果返回的是整个响应对象，提取 data 字段
-      const data = typeof result === 'object' && result.code !== undefined && result.data
-        ? result.data
-        : result;
-      
+      const data =
+        typeof result === 'object' && result.code !== undefined && result.data
+          ? result.data
+          : result;
+
       // 设置表单值
       if (data && typeof data === 'object') {
         formApi.setValues(data);
@@ -335,15 +351,20 @@ export function createDrawerForm<T = any>(
     loading: unref(loading),
     isOpen: unref(open),
     onOpenChange: (isOpen: boolean) => {
-      if (!isOpen) {
-        close();
-      } else {
+      if (isOpen) {
         open.value = isOpen;
+      } else {
+        close();
       }
     },
     destroyOnClose: options.destroyOnClose ?? true,
     footer: mode.value !== 'view',
-    confirmText: mode.value === 'create' ? $t('confirm') : mode.value === 'edit' ? $t('common.save') : $t('common.confirm'),
+    confirmText:
+      mode.value === 'create'
+        ? $t('confirm')
+        : mode.value === 'edit'
+          ? $t('common.save')
+          : $t('common.confirm'),
     onConfirm: handleSubmit,
     cancelText: $t('common.cancel'),
     showCancelButton: mode.value !== 'view',
@@ -363,7 +384,12 @@ export function createDrawerForm<T = any>(
         loading: unref(loading),
         isOpen: unref(open),
         footer: mode.value !== 'view',
-        confirmText: mode.value === 'create' ? $t('confirm') : mode.value === 'edit' ? $t('common.save') : $t('common.confirm'),
+        confirmText:
+          mode.value === 'create'
+            ? $t('confirm')
+            : mode.value === 'edit'
+              ? $t('common.save')
+              : $t('common.confirm'),
         showCancelButton: mode.value !== 'view',
       });
     },
@@ -392,11 +418,14 @@ export function createDrawerForm<T = any>(
       name: 'DrawerForm',
       setup() {
         return () =>
-          h(Drawer, {}, {
-            default: () => h(DrawerContent),
-          });
+          h(
+            Drawer,
+            {},
+            {
+              default: () => h(DrawerContent),
+            },
+          );
       },
     }),
   };
 }
-

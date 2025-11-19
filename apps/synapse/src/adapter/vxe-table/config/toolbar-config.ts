@@ -1,15 +1,17 @@
-import { computed, type ComputedRef } from 'vue';
+import type { ComputedRef } from 'vue';
+
+import { computed } from 'vue';
 
 /**
  * 工具栏按钮配置
- * 
+ *
  * 提供通用的工具栏按钮配置接口和类型定义
  * 用于在 gridConfig.ts 中配置表格工具栏按钮
  */
 
 /**
  * 工具栏按钮配置接口
- * 
+ *
  * 用于定义表格工具栏中的按钮配置
  * 支持权限检查、图标、禁用状态等配置
  */
@@ -17,14 +19,14 @@ export interface ToolbarButtonConfig {
   /** 按钮文本的国际化 key */
   textKey: string;
   /** 按钮类型 */
-  type?: 'primary' | 'default' | 'dashed' | 'link' | 'text';
+  type?: 'dashed' | 'default' | 'link' | 'primary' | 'text';
   /** 图标组件名称（从 @vben/icons 导入） */
   icon?: string;
   /** 权限码数组，用于权限检查 */
   accessCodes?: string[];
   /** 是否禁用（函数形式，支持响应式） */
   disabled?: () => boolean;
-  /** 
+  /**
    * 点击事件处理函数（可选）
    * 如果不提供，会根据 textKey 自动绑定到对应的操作
    * 例如：'add' 会自动绑定到 drawerForm.openCreate
@@ -63,13 +65,13 @@ export interface CreateToolbarButtonsOptions {
 
 /**
  * 创建工具栏按钮的工厂函数
- * 
+ *
  * 将配置转换为实际可用的按钮配置，包括：
  * - 权限检查
  * - 图标组件映射
  * - 事件处理器绑定
  * - 禁用状态计算
- * 
+ *
  * @param options 创建选项
  * @returns 处理后的按钮配置（响应式）
  */
@@ -84,7 +86,6 @@ export function createToolbarButtons(
       // 如果 accessCodes 为空数组或包含空字符串，则不进行权限检查
       const hasValidAccessCodes =
         config.accessCodes &&
-        config.accessCodes.length > 0 &&
         config.accessCodes.some((code) => code && code.trim() !== '');
       const hasPermission = hasValidAccessCodes
         ? hasAccessByCodes(config.accessCodes!)
@@ -102,32 +103,30 @@ export function createToolbarButtons(
       }
 
       // 如果还是没有，包装一个带权限检查的空函数
-      if (!onClickHandler) {
-        onClickHandler = () => {
-          const hasValidAccessCodes =
-            config.accessCodes &&
-            config.accessCodes.length > 0 &&
-            config.accessCodes.some((code) => code && code.trim() !== '');
-          if (hasValidAccessCodes && !hasAccessByCodes(config.accessCodes!)) {
-            console.warn(`[${config.textKey}按钮] 无权限，阻止操作`);
-            return;
-          }
-          console.warn(`[${config.textKey}按钮] 未配置事件处理器`);
-        };
-      } else {
+      if (onClickHandler) {
         // 如果配置了事件处理器，包装它以添加权限检查
         const originalOnClick = onClickHandler;
         onClickHandler = () => {
           // 如果有权限要求，先检查权限
           const hasValidAccessCodes =
             config.accessCodes &&
-            config.accessCodes.length > 0 &&
             config.accessCodes.some((code) => code && code.trim() !== '');
           if (hasValidAccessCodes && !hasAccessByCodes(config.accessCodes!)) {
             console.warn(`[${config.textKey}按钮] 无权限，阻止操作`);
             return;
           }
           originalOnClick();
+        };
+      } else {
+        onClickHandler = () => {
+          const hasValidAccessCodes =
+            config.accessCodes &&
+            config.accessCodes.some((code) => code && code.trim() !== '');
+          if (hasValidAccessCodes && !hasAccessByCodes(config.accessCodes!)) {
+            console.warn(`[${config.textKey}按钮] 无权限，阻止操作`);
+            return;
+          }
+          console.warn(`[${config.textKey}按钮] 未配置事件处理器`);
         };
       }
 
@@ -141,7 +140,6 @@ export function createToolbarButtons(
           // 只有当 accessCodes 有效时才进行权限检查
           const hasValidAccessCodes =
             config.accessCodes &&
-            config.accessCodes.length > 0 &&
             config.accessCodes.some((code) => code && code.trim() !== '');
           if (hasValidAccessCodes && !hasAccessByCodes(config.accessCodes!)) {
             return true;
@@ -156,4 +154,3 @@ export function createToolbarButtons(
     });
   });
 }
-

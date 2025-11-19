@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { Page } from '@vben/common-ui';
-import { VbenButton } from '@vben/common-ui';
+import { Page, VbenButton } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
+import { $t } from '@vben/locales';
 
 import { useCountryTable } from './countryTable';
-import { $t } from '@vben/locales';
 // 使用表格配置 Composable
 // 表格高度会根据每页条数自动调整（在 grid.ts 中处理）
 const { Grid, drawerForm } = useCountryTable();
@@ -19,7 +18,7 @@ const { Grid, drawerForm } = useCountryTable();
             <template #icon>
               <Plus class="size-4" />
             </template>
-            {{$t('add')}}
+            {{ $t('add') }}
           </VbenButton>
         </template>
       </Grid>
