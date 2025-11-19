@@ -8,7 +8,22 @@ import { defineOverridesPreferences } from '@vben/preferences';
 export const overridesPreferences = defineOverridesPreferences({
   // overrides
   app: {
-    name: import.meta.env.VITE_APP_TITLE,
-    defaultHomePath: '/mdm', // 设置默认首页为 MDM 模块
+    name: 'Synapse Factory',
+    defaultHomePath: '/dashboard/workspace', // 设置默认首页为工作台
+  },
+  logo: {
+    enable: true,
+    fit: 'contain',
+    source: '/logo.svg',
+    sourceDark: '/logo-dark.svg',
+  },
+  copyright: {
+    companyName: 'Synapse Factory',
+    companySiteLink: '#',
+    date: '2024',
+    enable: true,
+    icp: '',
+    icpLink: '',
+    settingShow: true,
   },
 });

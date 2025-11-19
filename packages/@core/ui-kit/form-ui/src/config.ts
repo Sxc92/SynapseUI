@@ -71,6 +71,7 @@ export function setupVbenForm<
 
   const components = globalShareState.getComponents();
 
+  // 处理 globalShareState 中的组件
   for (const component of Object.keys(components)) {
     const key = component as BaseFormComponentType;
     COMPONENT_MAP[key] = components[component as never];
@@ -82,6 +83,27 @@ export function setupVbenForm<
     // 覆盖特殊组件的modelPropName
     if (modelPropNameMap && modelPropNameMap[key]) {
       COMPONENT_BIND_EVENT_MAP[key] = modelPropNameMap[key];
+    }
+  }
+
+  // 处理 COMPONENT_MAP 中已存在的组件（如 VbenSelect），确保它们的 modelPropName 也被设置
+  // 优先处理 modelPropNameMap 中的特殊组件映射（覆盖之前的设置）
+  if (modelPropNameMap) {
+    for (const key of Object.keys(modelPropNameMap) as BaseFormComponentType[]) {
+      COMPONENT_BIND_EVENT_MAP[key] = modelPropNameMap[key];
+    }
+  }
+
+  // 对于 COMPONENT_MAP 中还没有映射的组件，应用 baseModelPropName
+  for (const key of Object.keys(COMPONENT_MAP) as BaseFormComponentType[]) {
+    // 如果组件已经有映射，跳过（避免覆盖 modelPropNameMap 中的设置）
+    if (COMPONENT_BIND_EVENT_MAP[key]) {
+      continue;
+    }
+
+    // 如果 baseModelPropName 不是默认值，设置它
+    if (baseModelPropName !== DEFAULT_MODEL_PROP_NAME) {
+      COMPONENT_BIND_EVENT_MAP[key] = baseModelPropName;
     }
   }
 }

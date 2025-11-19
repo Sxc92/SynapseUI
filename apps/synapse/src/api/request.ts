@@ -3,6 +3,9 @@
  */
 import type { RequestClientOptions } from '@vben/request';
 
+import { useRouter } from 'vue-router';
+
+import { LOGIN_PATH } from '@vben/constants';
 import { useAppConfig } from '@vben/hooks';
 import { preferences } from '@vben/preferences';
 import {
@@ -11,11 +14,9 @@ import {
   errorMessageResponseInterceptor,
   RequestClient,
 } from '@vben/request';
-import { useAccessStore } from '@vben/stores';
+import { resetAllStores, useAccessStore } from '@vben/stores';
 
 import { message } from 'ant-design-vue';
-
-import { useAuthStore } from '#/store';
 
 import { refreshTokenApi } from './iam';
 
@@ -27,21 +28,48 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
     baseURL,
   });
 
+  // 防止 doReAuthenticate 重复调用的标志
+  let isReAuthenticating = false;
+
   /**
    * 重新认证逻辑
    */
   async function doReAuthenticate() {
-    console.warn('Access token or refresh token is invalid or expired. ');
-    const accessStore = useAccessStore();
-    const authStore = useAuthStore();
-    accessStore.setAccessToken(null);
-    if (
-      preferences.app.loginExpiredMode === 'modal' &&
-      accessStore.isAccessChecked
-    ) {
-      accessStore.setLoginExpired(true);
-    } else {
-      await authStore.logout();
+    // 如果正在重新认证，直接返回，避免无限循环
+    if (isReAuthenticating) {
+      console.warn('[doReAuthenticate] 正在重新认证中，跳过重复调用');
+      return;
+    }
+
+    try {
+      isReAuthenticating = true;
+      console.warn('Access token or refresh token is invalid or expired. ');
+      const accessStore = useAccessStore();
+      accessStore.setAccessToken(null);
+      if (
+        preferences.app.loginExpiredMode === 'modal' &&
+        accessStore.isAccessChecked
+      ) {
+        accessStore.setLoginExpired(true);
+      } else {
+        // 直接清理状态并跳转，不调用需要认证的 logout API，避免无限循环
+        resetAllStores();
+        accessStore.setLoginExpired(false);
+        
+        // 跳转到登录页
+        const router = useRouter();
+        await router.replace({
+          path: LOGIN_PATH,
+          query: {
+            redirect: encodeURIComponent(router.currentRoute.value.fullPath),
+          },
+        });
+      }
+    } finally {
+      // 延迟重置标志，确保所有清理操作完成
+      setTimeout(() => {
+        isReAuthenticating = false;
+      }, 1000);
     }
   }
 
@@ -83,7 +111,39 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
     }),
   );
 
-  // token过期的处理
+  // 处理业务码表示 token 失效的情况（在 authenticateResponseInterceptor 之前处理）
+  // 后端可能返回 200 状态码，但业务码表示 token 失效，需要转换为 401 错误
+  client.addResponseInterceptor({
+    rejected: async (error) => {
+      const responseData = error?.response?.data ?? error?.data;
+      // 检查业务码是否表示 token 失效（常见的业务码：401, '401', 'UNAUTHORIZED', 'TOKEN_EXPIRED' 等）
+      // 根据实际后端返回的业务码进行调整
+      const tokenExpiredCodes = [401, '401', 'UNAUTHORIZED', 'TOKEN_EXPIRED', 'TOKEN_INVALID'];
+      
+      if (
+        responseData &&
+        typeof responseData === 'object' &&
+        'code' in responseData &&
+        tokenExpiredCodes.includes(responseData.code)
+      ) {
+        console.warn('[Token失效] 业务码表示 token 失效:', responseData.code);
+        // 将错误转换为 401 状态码，这样 authenticateResponseInterceptor 可以处理
+        const modifiedError = Object.assign(error, {
+          response: {
+            ...error.response,
+            status: 401,
+            data: responseData,
+          },
+        });
+        // 不在这里调用 doReAuthenticate，让 authenticateResponseInterceptor 统一处理
+        throw modifiedError;
+      }
+      // 如果不是 token 失效的业务码，继续抛出原始错误
+      throw error;
+    },
+  });
+
+  // token过期的处理（处理 HTTP 401 状态码和业务码转换后的 401）
   client.addResponseInterceptor(
     authenticateResponseInterceptor({
       client,
@@ -112,6 +172,11 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
 
 export const requestClient = createRequestClient(apiURL, {
   responseReturn: 'data',
+});
+
+// 返回完整响应对象的 requestClient（用于需要获取 code 和 msg 的接口）
+export const fullResponseClient = createRequestClient(apiURL, {
+  responseReturn: 'body', // 返回完整的响应对象
 });
 
 export const baseRequestClient = new RequestClient({ baseURL: apiURL });

@@ -1,4 +1,4 @@
-import type { CountryData } from './useCountryTable';
+import type { CountryData } from './types';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
 

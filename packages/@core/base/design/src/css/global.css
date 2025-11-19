@@ -158,3 +158,71 @@ html.invert-mode {
 html.grayscale-mode {
   @apply grayscale;
 }
+
+/* 全局 disabled 样式：高亮、黑体加粗 */
+@layer base {
+  /* 原生 HTML 元素的 disabled 属性 */
+  input[disabled],
+  button[disabled],
+  select[disabled],
+  textarea[disabled],
+  [disabled] {
+    font-weight: 700 !important; /* 黑体加粗 */
+    color: hsl(var(--foreground)) !important; /* 高亮：使用前景色 */
+    opacity: 1 !important;
+    background-color: hsl(var(--muted) / 0.6) !important;
+    border-color: hsl(var(--border)) !important;
+    border-width: 1.5px !important;
+  }
+
+  /* Ant Design Vue 组件的 disabled 状态 */
+  .ant-btn[disabled],
+  .ant-btn-disabled,
+  .ant-input[disabled],
+  .ant-input-disabled,
+  .ant-select-disabled .ant-select-selector,
+  .ant-select.ant-select-disabled,
+  .ant-input-number-disabled,
+  .ant-input-number[disabled],
+  .ant-picker-disabled,
+  .ant-picker[disabled],
+  .ant-radio-disabled,
+  .ant-checkbox-disabled,
+  .ant-switch-disabled,
+  .ant-slider-disabled,
+  .ant-rate-disabled {
+    font-weight: 700 !important; /* 黑体加粗 */
+    color: hsl(var(--foreground)) !important; /* 高亮：使用前景色 */
+    opacity: 1 !important;
+    background-color: hsl(var(--muted) / 0.6) !important;
+    border-color: hsl(var(--border)) !important;
+    border-width: 1.5px !important;
+  }
+
+  /* Ant Design Vue 组件内部文本的 disabled 状态 */
+  .ant-btn[disabled] span,
+  .ant-btn-disabled span,
+  .ant-btn[disabled] .anticon,
+  .ant-btn-disabled .anticon,
+  .ant-input[disabled]::placeholder,
+  .ant-input-disabled::placeholder,
+  .ant-select-disabled .ant-select-selection-item,
+  .ant-select-disabled .ant-select-selection-placeholder {
+    font-weight: 700 !important; /* 黑体加粗 */
+    color: hsl(var(--foreground)) !important; /* 高亮：使用前景色 */
+  }
+
+  /* VxeTable 组件的 disabled 状态 */
+  .vxe-input--inner[disabled],
+  .vxe-input[disabled],
+  .vxe-button.is--disabled,
+  .vxe-button[disabled],
+  .vxe-select[disabled] {
+    font-weight: 700 !important; /* 黑体加粗 */
+    color: hsl(var(--foreground)) !important; /* 高亮：使用前景色 */
+    opacity: 1 !important;
+    background-color: hsl(var(--muted) / 0.6) !important;
+    border-color: hsl(var(--border)) !important;
+    border-width: 1.5px !important;
+  }
+}

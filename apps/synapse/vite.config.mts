@@ -17,7 +17,10 @@ export default defineConfig(async (configEnv) => {
     env.VITE_API_PROXY_TARGET || 'http://localhost:8080';
 
   return {
-    application: {},
+    application: {
+      // 设置应用标题，用于加载页面和浏览器标题
+      appTitle: 'Synapse Factory',
+    },
     vite: {
       server: {
         proxy: {

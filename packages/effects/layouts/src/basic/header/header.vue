@@ -6,7 +6,8 @@ import { RotateCw } from '@vben/icons';
 import { preferences, usePreferences } from '@vben/preferences';
 import { useAccessStore } from '@vben/stores';
 
-import { VbenFullScreen, VbenIconButton } from '@vben-core/shadcn-ui';
+// import { VbenFullScreen, VbenIconButton } from '@vben-core/shadcn-ui';
+import { VbenIconButton } from '@vben-core/shadcn-ui';
 
 import {
   GlobalSearch,
@@ -73,12 +74,13 @@ const rightSlots = computed(() => {
       name: 'timezone',
     });
   }
-  if (preferences.widget.fullscreen) {
-    list.push({
-      index: REFERENCE_VALUE + 50,
-      name: 'fullscreen',
-    });
-  }
+  // 全屏布局已注释
+  // if (preferences.widget.fullscreen) {
+  //   list.push({
+  //     index: REFERENCE_VALUE + 50,
+  //     name: 'fullscreen',
+  //   });
+  // }
   if (preferences.widget.notification) {
     list.push({
       index: REFERENCE_VALUE + 60,
@@ -170,9 +172,10 @@ function clearPreferencesAndLogout() {
         <template v-else-if="slot.name === 'language-toggle'">
           <LanguageToggle class="mr-1" />
         </template>
-        <template v-else-if="slot.name === 'fullscreen'">
+        <!-- 全屏布局已注释 -->
+        <!-- <template v-else-if="slot.name === 'fullscreen'">
           <VbenFullScreen class="mr-1" />
-        </template>
+        </template> -->
         <template v-else-if="slot.name === 'timezone'">
           <TimezoneButton class="mr-1 mt-[2px]" />
         </template>

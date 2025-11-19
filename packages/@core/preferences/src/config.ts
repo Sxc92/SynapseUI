@@ -126,7 +126,7 @@ const defaultPreferences: Preferences = {
     progress: true,
   },
   widget: {
-    fullscreen: true,
+    // fullscreen: true, // 全屏布局已注释
     globalSearch: true,
     languageToggle: true,
     lockScreen: true,

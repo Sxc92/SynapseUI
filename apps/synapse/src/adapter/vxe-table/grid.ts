@@ -1,6 +1,8 @@
 import type { VxeGridListeners, VxeGridProps } from '#/adapter/vxe-table';
 
-import { h, nextTick, ref } from 'vue';
+import { h, nextTick, ref, toRaw } from 'vue';
+
+import { useDebounceFn } from '@vueuse/core';
 
 import { mergeWithArrayOverride } from '@vben/utils';
 
@@ -402,11 +404,36 @@ export function createGrid<T = any>(options: GridOptions<T>): GridInstance<T> {
       ajax: {
         query: async ({ page }: any, formValues: any) => {
           try {
-            const res = await options.api.getPage({
-              ...formValues,
+            console.log('[proxyConfig.ajax.query] 1. 接收到的参数:');
+            console.log('  - page:', page);
+            console.log('  - formValues:', formValues);
+            console.log('  - formValues 类型:', typeof formValues, Array.isArray(formValues));
+            console.log('  - formValues 键:', formValues ? Object.keys(formValues) : 'null/undefined');
+            
+            // 处理表单值：将字符串 'true'/'false' 转换为布尔值
+            const processedFormValues = { ...formValues };
+            console.log('[proxyConfig.ajax.query] 2. 处理后的表单值:', processedFormValues);
+            
+            // 遍历表单值，将字符串 'true'/'false' 转换为布尔值
+            for (const key in processedFormValues) {
+              const value = processedFormValues[key];
+              if (value === 'true') {
+                processedFormValues[key] = true;
+              } else if (value === 'false') {
+                processedFormValues[key] = false;
+              }
+            }
+            console.log('[proxyConfig.ajax.query] 3. 类型转换后的表单值:', processedFormValues);
+
+            const requestParams = {
+              ...processedFormValues,
               pageNo: page.currentPage,
               pageSize: page.pageSize,
-            });
+            };
+            console.log('[proxyConfig.ajax.query] 4. 最终请求参数:', requestParams);
+            console.log('[proxyConfig.ajax.query] 5. 请求参数键:', Object.keys(requestParams));
+
+            const res = await options.api.getPage(requestParams);
 
             // 自动识别返回格式：
             // 1. 如果是 { code: 200, data: { records, total }, msg } 格式
@@ -513,7 +540,93 @@ export function createGrid<T = any>(options: GridOptions<T>): GridInstance<T> {
   const processedFormOptions = (() => {
     if (!options.formOptions) return options.formOptions;
 
-    const formOptions = structuredClone(options.formOptions); // 深拷贝
+    // 如果 formOptions 是函数，先调用获取配置对象
+    const rawFormOptions = typeof options.formOptions === 'function' 
+      ? options.formOptions() 
+      : options.formOptions;
+
+    // 提取所有函数属性（structuredClone 无法克隆函数）
+    const functionsMap = new Map<string, any>();
+    
+    // 递归提取函数并创建不包含函数的副本
+    function extractFunctionsAndClone(obj: any, path = ''): any {
+      if (obj === null || obj === undefined) return obj;
+      
+      if (typeof obj === 'function') {
+        // 保存函数
+        functionsMap.set(path, obj);
+        return null; // 临时替换为 null
+      }
+      
+      if (Array.isArray(obj)) {
+        return obj.map((item, index) => 
+          extractFunctionsAndClone(item, path ? `${path}[${index}]` : `[${index}]`)
+        );
+      }
+      
+      if (typeof obj === 'object') {
+        const cloned: any = {};
+        for (const key in obj) {
+          if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            const value = obj[key];
+            const currentPath = path ? `${path}.${key}` : key;
+            cloned[key] = extractFunctionsAndClone(value, currentPath);
+          }
+        }
+        return cloned;
+      }
+      
+      return obj;
+    }
+    
+    // 恢复函数属性（使用相同的路径生成逻辑）
+    function restoreFunctions(obj: any, path = ''): void {
+      if (obj === null || obj === undefined) return;
+      
+      if (Array.isArray(obj)) {
+        obj.forEach((item, index) => {
+          const currentPath = path ? `${path}[${index}]` : `[${index}]`;
+          // 先检查当前路径是否有函数（数组项本身可能是函数）
+          if (functionsMap.has(currentPath)) {
+            obj[index] = functionsMap.get(currentPath);
+          } else if (item !== null && item !== undefined && typeof item === 'object') {
+            restoreFunctions(item, currentPath);
+          }
+        });
+        return;
+      }
+      
+      if (typeof obj !== 'object') return;
+      
+      for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+          const value = obj[key];
+          const currentPath = path ? `${path}.${key}` : key;
+          
+          // 如果这个路径有保存的函数，恢复它（无论当前值是 null 还是其他）
+          if (functionsMap.has(currentPath)) {
+            obj[key] = functionsMap.get(currentPath);
+          } else if (Array.isArray(value)) {
+            value.forEach((item, index) => {
+              if (item !== null && item !== undefined) {
+                restoreFunctions(item, `${currentPath}[${index}]`);
+              }
+            });
+          } else if (value !== null && value !== undefined && typeof value === 'object') {
+            restoreFunctions(value, currentPath);
+          }
+        }
+      }
+    }
+
+    // 提取函数并创建不包含函数的副本
+    const clonedWithoutFunctions = extractFunctionsAndClone(rawFormOptions);
+    
+    // 深拷贝（现在不包含函数了）
+    const formOptions = structuredClone(clonedWithoutFunctions);
+    
+    // 恢复函数
+    restoreFunctions(formOptions);
 
     // 统一设置默认配置（用户配置会覆盖这些默认值）
     const defaultFormOptions = {
@@ -550,41 +663,88 @@ export function createGrid<T = any>(options: GridOptions<T>): GridInstance<T> {
     });
 
     // 创建自动搜索函数（使用闭包访问 gridApiRef）
+    const performSearch = async () => {
+      // 延迟执行，确保值已更新
+      await nextTick();
+      if (gridApiRef.value) {
+        const formValues = await gridApiRef.value.formApi?.getValues();
+        console.log('[自动搜索] 1. 获取到的表单值:', formValues);
+        console.log('[自动搜索] 2. formValues 类型:', typeof formValues, Array.isArray(formValues));
+        console.log('[自动搜索] 3. formValues 键:', formValues ? Object.keys(formValues) : 'null/undefined');
+        
+        // 先设置最新提交值，这样 extendProxyOptions 中的 getFormValues 可以获取到最新值
+        // 使用 toRaw 确保传递的是原始值，避免响应式对象导致的问题
+        const rawFormValues = toRaw(formValues);
+        console.log('[自动搜索] 4. toRaw 后的值:', rawFormValues);
+        gridApiRef.value.formApi?.setLatestSubmissionValues(rawFormValues);
+        
+        // 验证设置是否成功
+        const latestValues = gridApiRef.value.formApi?.getLatestSubmissionValues();
+        console.log('[自动搜索] 5. 设置后的最新提交值:', latestValues);
+        
+        // 使用 query 方法触发查询，它会通过 extendProxyOptions 的包装函数自动合并表单值
+        // extendProxyOptions 包装了 query 方法，会自动将表单值合并到请求参数中
+        console.log('[自动搜索] 6. 准备调用 query 方法，传入参数:', formValues);
+        await gridApiRef.value.query(formValues);
+        console.log('[自动搜索] 7. query 方法调用完成');
+      } else {
+        console.warn('[自动搜索] gridApiRef.value 为空');
+      }
+    };
+
+    // 使用防抖函数，延迟 300ms 执行搜索，避免频繁请求
+    const debouncedSearch = useDebounceFn(performSearch, 300);
+
+    // 创建自动搜索处理函数
     const createAutoSearchHandler = (
       originalHandler?: (...args: any[]) => any,
+      immediate = false, // 是否立即执行（不清除按钮等需要立即执行）
     ) => {
       return async (...args: any[]) => {
         // 执行原有的处理函数（如果有）
         if (originalHandler) {
           originalHandler(...args);
         }
-        // 延迟执行，确保值已更新
-        await nextTick();
-        if (gridApiRef.value) {
-          const formValues = await gridApiRef.value.formApi?.getValues();
-          gridApiRef.value.reload(formValues);
+        // 根据 immediate 参数决定是立即执行还是防抖执行
+        if (immediate) {
+          await performSearch();
+        } else {
+          debouncedSearch();
         }
       };
     };
 
-    // 为每个字段添加 blur 和 clear 事件处理
-    if (formOptions.schema && Array.isArray(formOptions.schema)) {
+    // 为每个字段添加输入和清除事件处理（如果未禁用自动搜索）
+    if (!formOptions.disableAutoSearch && formOptions.schema && Array.isArray(formOptions.schema)) {
       formOptions.schema = formOptions.schema.map((field: any) => {
         const fieldConfig = { ...field };
         const originalComponentProps = fieldConfig.componentProps || {};
 
-        // 添加 blur 事件：光标离开时自动搜索
+        const originalOnChange = originalComponentProps.onChange;
+        const originalOnClear = originalComponentProps.onClear;
+        const originalClear = originalComponentProps.clear;
+        const originalUpdateModelValue = originalComponentProps['onUpdate:modelValue'];
+        // Ant Design Vue Select 使用 update:value 事件（v-model:value）
+        const originalUpdateValue = originalComponentProps['onUpdate:value'];
+
         fieldConfig.componentProps = {
           ...originalComponentProps,
-          onBlur: createAutoSearchHandler(originalComponentProps.onBlur),
+          // 监听 onChange：用户输入时触发搜索（使用防抖，避免频繁请求）
+          onChange: createAutoSearchHandler(originalOnChange, false),
+          // VbenSelect 使用 update:modelValue 事件，也需要监听
+          'onUpdate:modelValue': createAutoSearchHandler(originalUpdateModelValue, false),
+          // Ant Design Vue Select 使用 update:value 事件（v-model:value），需要监听以确保值正确更新到表单
+          'onUpdate:value': createAutoSearchHandler(originalUpdateValue, false),
+          // 如果字段支持 allowClear，添加 clear 事件：清除按钮点击时立即触发搜索
+          // Ant Design Vue 的 Input/Select 组件清除事件可能是 onClear 或 clear
+          // SynapseInput 和 VbenSelect 组件使用 onClear 事件
+          ...(originalComponentProps.allowClear
+            ? {
+                onClear: createAutoSearchHandler(originalOnClear, true),
+                clear: createAutoSearchHandler(originalClear, true),
+              }
+            : {}),
         };
-
-        // 如果字段支持 allowClear，添加 clear 事件：清空时也触发搜索
-        if (originalComponentProps.allowClear) {
-          fieldConfig.componentProps.onClear = createAutoSearchHandler(
-            originalComponentProps.onClear,
-          );
-        }
 
         return fieldConfig;
       });

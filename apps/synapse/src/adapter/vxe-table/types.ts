@@ -158,6 +158,7 @@ export interface ExtendedColumnConfig {
       | 'CellMoney'
       | 'CellProgress'
       | 'CellStatus'
+      | 'CellStatusIcon'
       | 'CellTag'
       | 'CellTooltip';
     props?: Record<string, any>;

@@ -4,6 +4,7 @@ import { ref, unref } from 'vue';
 import { createIconifyIcon } from '@vben/icons';
 import { $t } from '@vben/locales';
 import { useTimezoneStore } from '@vben/stores';
+import { getTimezoneOptions } from '@vben/layouts';
 
 import { useVbenModal } from '@vben-core/popup-ui';
 import {
@@ -42,7 +43,8 @@ const [Modal, modalApi] = useVbenModal({
   async onOpenChange(isOpen) {
     if (isOpen) {
       timezoneRef.value = unref(timezoneStore.timezone);
-      timezoneOptionsRef.value = await timezoneStore.getTimezoneOptions();
+      // 使用最新的时区选项列表（从 timezone-location.ts 获取）
+      timezoneOptionsRef.value = getTimezoneOptions($t);
     }
   },
 });

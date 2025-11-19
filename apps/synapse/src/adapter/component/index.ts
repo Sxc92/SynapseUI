@@ -15,6 +15,11 @@ import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
 
+// Synapse 自定义组件
+import { SynapseNumberInput } from './number-input';
+import { SynapseDatePicker } from './date-picker';
+import { SynapseInput } from './input';
+
 const AutoComplete = defineAsyncComponent(
   () => import('ant-design-vue/es/auto-complete'),
 );
@@ -118,6 +123,10 @@ export type ComponentType =
   | 'Select'
   | 'Space'
   | 'Switch'
+  | 'SynapseDatePicker'
+  | 'SynapseNumberInput'
+  | 'SynapseInput'
+  | 'SynapseSelect'
   | 'Textarea'
   | 'TimePicker'
   | 'TreeSelect'
@@ -186,6 +195,10 @@ async function initComponentAdapter() {
     Select: withDefaultPlaceholder(Select, 'select'),
     Space,
     Switch,
+    // Synapse 自定义组件
+    SynapseDatePicker,
+    SynapseNumberInput,
+    SynapseInput,
     Textarea: withDefaultPlaceholder(Textarea, 'input'),
     TimePicker,
     TreeSelect: withDefaultPlaceholder(TreeSelect, 'select'),

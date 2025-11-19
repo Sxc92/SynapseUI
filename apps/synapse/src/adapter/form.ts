@@ -15,11 +15,13 @@ async function initSetupVbenForm() {
       baseModelPropName: 'value',
 
       // 一些组件是 v-model:checked 或者 v-model:fileList
+      // VbenSelect 使用 modelValue (defineModel)
       modelPropNameMap: {
         Checkbox: 'checked',
         Radio: 'checked',
         Switch: 'checked',
         Upload: 'fileList',
+        VbenSelect: 'modelValue',
       },
     },
     defineRules: {
