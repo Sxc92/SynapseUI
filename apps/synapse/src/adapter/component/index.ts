@@ -19,6 +19,7 @@ import { SynapseDatePicker } from './date-picker';
 import { SynapseInput } from './input';
 // Synapse 自定义组件
 import { SynapseNumberInput } from './number-input';
+import { Transfer } from './transfer';
 
 const AutoComplete = defineAsyncComponent(
   () => import('ant-design-vue/es/auto-complete'),
@@ -63,6 +64,9 @@ const TimePicker = defineAsyncComponent(
 );
 const TreeSelect = defineAsyncComponent(
   () => import('ant-design-vue/es/tree-select'),
+);
+const TransferBase = defineAsyncComponent(
+  () => import('ant-design-vue/es/transfer'),
 );
 const Upload = defineAsyncComponent(() => import('ant-design-vue/es/upload'));
 
@@ -129,6 +133,7 @@ export type ComponentType =
   | 'SynapseSelect'
   | 'Textarea'
   | 'TimePicker'
+  | 'Transfer'
   | 'TreeSelect'
   | 'Upload'
   | BaseFormComponentType;
@@ -201,6 +206,10 @@ async function initComponentAdapter() {
     SynapseInput,
     Textarea: withDefaultPlaceholder(Textarea, 'input'),
     TimePicker,
+    Transfer: {
+      ...Transfer,
+      name: 'Transfer',
+    },
     TreeSelect: withDefaultPlaceholder(TreeSelect, 'select'),
     Upload,
   };

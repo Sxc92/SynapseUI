@@ -1,0 +1,112 @@
+{
+  "formRules": {
+    "required": "Zadejte {0}",
+    "selectRequired": "Vyberte {0}",
+    "minLength": "{0} musí mít alespoň {1} znaků",
+    "maxLength": "{0} může mít maximálně {1} znaků",
+    "length": "{0} musí mít {1} znaků",
+    "alreadyExists": "{0} `{1}` již existuje",
+    "startWith": "{0} musí začínat `{1}`",
+    "invalidURL": "Zadejte platnou URL"
+  },
+  "actionTitle": {
+    "edit": "Upravit {0}",
+    "create": "Vytvořit {0}",
+    "delete": "Smazat {0}",
+    "view": "Zobrazit {0}"
+  },
+  "actionMessage": {
+    "deleteConfirm": "Opravdu chcete smazat {0}?",
+    "deleting": "Maže se {0} ...",
+    "deleteSuccess": "{0} bylo úspěšně smazáno",
+    "operationSuccess": "Operace proběhla úspěšně",
+    "operationFailed": "Operace selhala"
+  },
+  "placeholder": {
+    "input": "Zadejte",
+    "select": "Vyberte"
+  },
+  "captcha": {
+    "title": "Dokončete bezpečnostní ověření",
+    "sliderSuccessText": "Prošlo",
+    "sliderDefaultText": "Posuňte a přetáhněte",
+    "alt": "Podporuje hodnotu atributu src tagu img",
+    "sliderRotateDefaultTip": "Klikněte na obrázek pro obnovení",
+    "sliderTranslateDefaultTip": "Klikněte na obrázek pro obnovení",
+    "sliderRotateFailTip": "Ověření selhalo",
+    "sliderRotateSuccessTip": "Ověření úspěšné, čas {0} sekund",
+    "sliderTranslateFailTip": "Ověření selhalo",
+    "sliderTranslateSuccessTip": "Ověření úspěšné, čas {0} sekund",
+    "refreshAriaLabel": "Obnovit captcha",
+    "confirmAriaLabel": "Potvrdit výběr",
+    "confirm": "Potvrdit",
+    "pointAriaLabel": "Kliknout na bod",
+    "clickInOrder": "Klikněte v pořadí"
+  },
+  "iconPicker": {
+    "placeholder": "Vyberte ikonu",
+    "search": "Hledat ikonu..."
+  },
+  "jsonViewer": {
+    "copy": "Kopírovat",
+    "copied": "Zkopírováno"
+  },
+  "fallback": {
+    "pageNotFound": "Ups! Stránka nenalezena",
+    "pageNotFoundDesc": "Omlouváme se, nemůžeme najít stránku, kterou hledáte.",
+    "forbidden": "Ups! Přístup zamítnut",
+    "forbiddenDesc": "Omlouváme se, ale nemáte oprávnění k přístupu na tuto stránku.",
+    "internalError": "Ups! Něco se pokazilo",
+    "internalErrorDesc": "Omlouváme se, ale server narazil na chybu.",
+    "offline": "Offline stránka",
+    "offlineError": "Ups! Síťová chyba",
+    "offlineErrorDesc": "Omlouváme se, nelze se připojit k internetu. Zkontrolujte připojení.",
+    "comingSoon": "Již brzy",
+    "http": {
+      "requestTimeout": "Požadavek vypršel. Zkuste to prosím později.",
+      "networkError": "Došlo k síťové chybě. Zkontrolujte připojení k internetu a zkuste to znovu.",
+      "badRequest": "Chybný požadavek. Zkontrolujte vstup a zkuste to znovu.",
+      "unauthorized": "Neautorizováno. Pro pokračování se prosím přihlaste.",
+      "forbidden": "Zakázáno. Nemáte oprávnění k přístupu k tomuto zdroji.",
+      "notFound": "Nenalezeno. Požadovaný zdroj nebyl nalezen.",
+      "internalServerError": "Interní chyba serveru. Něco se pokazilo na naší straně. Zkuste to prosím později."
+    }
+  },
+  "widgets": {
+    "document": "Dokument",
+    "qa": "Q&A",
+    "setting": "Nastavení",
+    "logoutTip": "Chcete se odhlásit?",
+    "viewAll": "Zobrazit všechny zprávy",
+    "notifications": "Oznámení",
+    "markAllAsRead": "Označit vše jako přečtené",
+    "clearNotifications": "Vymazat",
+    "checkUpdatesTitle": "Nová verze k dispozici",
+    "checkUpdatesDescription": "Klikněte pro obnovení a získání nejnovější verze",
+    "search": {
+      "title": "Hledat",
+      "searchNavigate": "Hledat navigaci",
+      "select": "Vybrat",
+      "navigate": "Navigovat",
+      "close": "Zavřít",
+      "noResults": "Nebyly nalezeny žádné výsledky vyhledávání",
+      "noRecent": "Žádná historie vyhledávání",
+      "recent": "Historie vyhledávání"
+    },
+    "lockScreen": {
+      "title": "Zamknout obrazovku",
+      "screenButton": "Zamykání",
+      "password": "Heslo",
+      "placeholder": "Zadejte heslo",
+      "unlock": "Klikněte pro odemknutí",
+      "errorPasswordTip": "Chybné heslo, zadejte znovu",
+      "backToLogin": "Zpět na přihlášení",
+      "entry": "Vstoupit do systému"
+    },
+    "timezone": {
+      "setTimezone": "Nastavit časové pásmo",
+      "setSuccess": "Časové pásmo bylo úspěšně nastaveno"
+    }
+  }
+}
+

@@ -1,0 +1,18 @@
+{
+  "dashboard": "Dashboard",
+  "workspace": "Workspace",
+  "mdm": "Data Center",
+  "country": "Countries",
+  "iam": "IAM",
+  "userAndOrg": "Users & Org",
+  "user": "Users",
+  "organization": "Organizations",
+  "position": "Positions",
+  "systemAndApp": "Systems & Apps",
+  "system": "Systems",
+  "permissionConfig": "Permissions",
+  "role": "Roles",
+  "menu": "Menus",
+  "resource": "Resources"
+}
+

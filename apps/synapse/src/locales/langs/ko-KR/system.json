@@ -1,0 +1,21 @@
+{
+  "management": "시스템 관리",
+  "create": "시스템 생성",
+  "edit": "시스템 편집",
+  "view": "시스템 상세 보기",
+  "code": "시스템 코드",
+  "codePlaceholder": "시스템 코드를 입력하세요",
+  "name": "시스템 이름",
+  "namePlaceholder": "시스템 이름을 입력하세요",
+  "sorted": "정렬",
+  "sortedPlaceholder": "정렬을 입력하세요",
+  "systemStatus": "시스템 상태",
+  "searchCodePlaceholder": "시스템 코드 검색...",
+  "searchNamePlaceholder": "시스템 이름 검색...",
+  "deleteConfirm": "이 시스템을 삭제하시겠습니까? 삭제 후에는 복원할 수 없습니다.",
+  "listTitle": "시스템 목록",
+  "loading": "로딩 중...",
+  "empty": "시스템이 없습니다",
+  "selectPlaceholder": "시스템 선택..."
+}
+

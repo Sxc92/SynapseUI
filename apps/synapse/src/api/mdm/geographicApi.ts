@@ -1,6 +1,6 @@
 import type { PageRequest, PageResponse } from '@vben/request';
 
-import { fullResponseClient, requestClient } from '#/api/request';
+import { requestClient } from '#/api/request';
 
 import { GEOGRAPHIC_API_PREFIX, MDM_API_PREFIX } from './constants';
 
@@ -44,21 +44,15 @@ export async function getPage(
 /**
  * 创建或更新国家
  * 如果 data 中包含 id，则为更新；否则为新增
- * 使用 fullResponseClient 返回完整的响应对象（包括 code 和 msg）
+ * requestClient 已经判断过业务编码，成功时返回 data 字段的值
  */
 export async function addOrModifyCountry(
   data: GeographicApi.Country | Partial<GeographicApi.Country>,
-): Promise<{ code: number | string; data?: any; msg: string }> {
-  // 使用 fullResponseClient 获取完整响应（包括 code 和 msg）
-  // fullResponseClient 配置了 responseReturn: 'body'，返回完整的响应对象
-  const response = await fullResponseClient.post<{
-    code: number | string;
-    data?: any;
-    msg: string;
-  }>(`${MDM_API_PREFIX}/${GEOGRAPHIC_API_PREFIX}/country/addOrModify`, data);
-
-  // fullResponseClient 返回的是 AxiosResponse，需要提取 data
-  return response;
+): Promise<any> {
+  return requestClient.post<any>(
+    `${MDM_API_PREFIX}/${GEOGRAPHIC_API_PREFIX}/country/addOrModify`,
+    data,
+  );
 }
 
 /**

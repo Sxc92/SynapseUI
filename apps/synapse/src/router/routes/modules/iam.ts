@@ -8,7 +8,7 @@ const routes: RouteRecordRaw[] = [
       icon: 'mdi:shield-account',
       keepAlive: true,
       order: 1,
-      title: $t('menu.iam'),
+      title: $t('menus.iam'),
     },
     name: 'IAM',
     path: '/iam',
@@ -17,7 +17,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           icon: 'mdi:account-group',
-          title: $t('menu.userAndOrg'),
+          title: $t('menus.userAndOrg'),
         },
         name: 'UserAndOrg',
         path: '/iam/user-org',
@@ -25,7 +25,7 @@ const routes: RouteRecordRaw[] = [
           {
             meta: {
               icon: 'mdi:account',
-              title: $t('menu.user'),
+              title: $t('menus.user'),
             },
             name: 'UserManage',
             path: '/iam/user',
@@ -34,7 +34,7 @@ const routes: RouteRecordRaw[] = [
           {
             meta: {
               icon: 'mdi:sitemap',
-              title: $t('menu.organization'),
+              title: $t('menus.organization'),
             },
             name: 'OrganizationManage',
             path: '/iam/organization',
@@ -43,7 +43,7 @@ const routes: RouteRecordRaw[] = [
           {
             meta: {
               icon: 'mdi:briefcase',
-              title: $t('menu.position'),
+              title: $t('menus.position'),
             },
             name: 'PositionManage',
             path: '/iam/position',
@@ -55,7 +55,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           icon: 'mdi:cog',
-          title: $t('menu.permissionConfig'),
+          title: $t('menus.permissionConfig'),
         },
         name: 'PermissionConfig',
         path: '/iam/permission',
@@ -63,7 +63,7 @@ const routes: RouteRecordRaw[] = [
           {
             meta: {
               icon: 'mdi:account-key',
-              title: $t('menu.role'),
+              title: $t('menus.role'),
             },
             name: 'RoleManage',
             path: '/iam/role',
@@ -72,7 +72,7 @@ const routes: RouteRecordRaw[] = [
           {
             meta: {
               icon: 'mdi:menu',
-              title: $t('menu.menu'),
+              title: $t('menus.menu'),
             },
             name: 'MenuManage',
             path: '/iam/menu',
@@ -81,7 +81,7 @@ const routes: RouteRecordRaw[] = [
           {
             meta: {
               icon: 'mdi:api',
-              title: $t('menu.resource'),
+              title: $t('menus.resource'),
             },
             name: 'ResourceManage',
             path: '/iam/resource',
@@ -93,7 +93,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           icon: 'mdi:application-cog',
-          title: $t('menu.systemAndApp'),
+          title: $t('menus.systemAndApp'),
         },
         name: 'SystemAndApp',
         path: '/iam/system-app',
@@ -101,7 +101,7 @@ const routes: RouteRecordRaw[] = [
           {
             meta: {
               icon: 'mdi:server',
-              title: $t('menu.system'),
+              title: $t('menus.system'),
             },
             name: 'SystemManage',
             path: '/iam/system',

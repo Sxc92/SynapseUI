@@ -1,0 +1,14 @@
+{
+  "management": "사용자 관리",
+  "username": "사용자 이름",
+  "usernamePlaceholder": "사용자 이름 검색...",
+  "nickname": "닉네임",
+  "email": "이메일",
+  "emailPlaceholder": "이메일 검색...",
+  "phone": "전화번호",
+  "phonePlaceholder": "전화번호 검색...",
+  "mobile": "휴대폰 번호",
+  "account": "계정",
+  "realName": "실명"
+}
+

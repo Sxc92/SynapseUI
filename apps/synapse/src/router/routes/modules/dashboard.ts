@@ -8,7 +8,7 @@ const routes: RouteRecordRaw[] = [
       icon: 'mdi:view-dashboard',
       keepAlive: true,
       order: 0,
-      title: $t('menu.dashboard'),
+      title: $t('menus.dashboard'),
     },
     name: 'Dashboard',
     path: '/dashboard',
@@ -16,7 +16,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           icon: 'mdi:briefcase-outline',
-          title: $t('menu.workspace'),
+          title: $t('menus.workspace'),
         },
         name: 'Workspace',
         path: '/dashboard/workspace',

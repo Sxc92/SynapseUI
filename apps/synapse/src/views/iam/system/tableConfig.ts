@@ -1,4 +1,4 @@
-import type { SystemData } from './types';
+import type { SystemData } from './systemTable';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
@@ -36,6 +36,7 @@ export const gridConfig: Partial<VxeGridProps<SystemData>> = {
   sortConfig: {
     multiple: true,
     trigger: 'default',
+    remote: true, // 启用远程排序，排序时自动触发请求
   },
   // 其他常用配置示例：
   autoResize: false, // 自动调整大小（禁用以避免频繁重排）
@@ -47,3 +48,4 @@ export const gridConfig: Partial<VxeGridProps<SystemData>> = {
     resizable: false, // 禁用行高调整，避免频繁重排
   },
 };
+

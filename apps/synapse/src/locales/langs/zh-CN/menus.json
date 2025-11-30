@@ -1,0 +1,18 @@
+{
+  "dashboard": "仪表盘",
+  "workspace": "工作台",
+  "mdm": "主数据中心",
+  "country": "国家管理",
+  "iam": "统一身份中心",
+  "userAndOrg": "用户与组织",
+  "user": "用户管理",
+  "organization": "组织架构管理",
+  "position": "岗位管理",
+  "systemAndApp": "系统与应用",
+  "system": "系统管理",
+  "permissionConfig": "权限配置",
+  "role": "角色管理",
+  "menu": "菜单管理",
+  "resource": "资源管理"
+}
+

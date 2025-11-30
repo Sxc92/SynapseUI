@@ -1,0 +1,14 @@
+{
+  "management": "ユーザー管理",
+  "username": "ユーザー名",
+  "usernamePlaceholder": "ユーザー名を検索...",
+  "nickname": "ニックネーム",
+  "email": "メールアドレス",
+  "emailPlaceholder": "メールアドレスを検索...",
+  "phone": "電話番号",
+  "phonePlaceholder": "電話番号を検索...",
+  "mobile": "携帯電話番号",
+  "account": "アカウント",
+  "realName": "本名"
+}
+

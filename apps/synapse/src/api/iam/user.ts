@@ -51,3 +51,14 @@ export async function getUserPage(
     params,
   );
 }
+
+/**
+ * 创建或更新用户
+ * 如果 data 中包含 id，则为更新；否则为新增
+ * requestClient 已经判断过业务编码，成功时返回 data 字段的值
+ */
+export async function addOrModifyUser(
+  data: UserApi.User | Partial<UserApi.User>,
+): Promise<any> {
+  return requestClient.post<any>(`${IAM_API_PREFIX}/user/addOrModify`, data);
+}

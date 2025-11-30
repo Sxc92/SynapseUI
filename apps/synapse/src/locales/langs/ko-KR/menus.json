@@ -1,0 +1,18 @@
+{
+  "dashboard": "대시보드",
+  "workspace": "작업 공간",
+  "mdm": "마스터 데이터 센터",
+  "country": "국가 관리",
+  "iam": "통합 신원 센터",
+  "userAndOrg": "사용자 및 조직",
+  "user": "사용자 관리",
+  "organization": "조직 구조 관리",
+  "position": "직위 관리",
+  "systemAndApp": "시스템 및 애플리케이션",
+  "system": "시스템 관리",
+  "permissionConfig": "권한 설정",
+  "role": "역할 관리",
+  "menu": "메뉴 관리",
+  "resource": "리소스 관리"
+}
+

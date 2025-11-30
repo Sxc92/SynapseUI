@@ -1,0 +1,18 @@
+{
+  "dashboard": "ダッシュボード",
+  "workspace": "ワークスペース",
+  "mdm": "マスターデータセンター",
+  "country": "国管理",
+  "iam": "統一アイデンティティセンター",
+  "userAndOrg": "ユーザーと組織",
+  "user": "ユーザー管理",
+  "organization": "組織構造管理",
+  "position": "ポジション管理",
+  "systemAndApp": "システムとアプリケーション",
+  "system": "システム管理",
+  "permissionConfig": "権限設定",
+  "role": "ロール管理",
+  "menu": "メニュー管理",
+  "resource": "リソース管理"
+}
+

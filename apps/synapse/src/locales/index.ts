@@ -15,6 +15,9 @@ import { preferences } from '@vben/preferences';
 
 import antdEnLocale from 'ant-design-vue/es/locale/en_US';
 import antdDefaultLocale from 'ant-design-vue/es/locale/zh_CN';
+import antdJaLocale from 'ant-design-vue/es/locale/ja_JP';
+import antdKoLocale from 'ant-design-vue/es/locale/ko_KR';
+import antdCsLocale from 'ant-design-vue/es/locale/cs_CZ';
 import dayjs from 'dayjs';
 
 const antdLocale = ref<Locale>(antdDefaultLocale);
@@ -61,6 +64,18 @@ async function loadDayjsLocale(lang: SupportedLanguagesType) {
       locale = await import('dayjs/locale/zh-cn');
       break;
     }
+    case 'ja-JP': {
+      locale = await import('dayjs/locale/ja');
+      break;
+    }
+    case 'ko-KR': {
+      locale = await import('dayjs/locale/ko');
+      break;
+    }
+    case 'cs-CZ': {
+      locale = await import('dayjs/locale/cs');
+      break;
+    }
     // 默认使用英语
     default: {
       locale = await import('dayjs/locale/en');
@@ -85,6 +100,18 @@ async function loadAntdLocale(lang: SupportedLanguagesType) {
     }
     case 'zh-CN': {
       antdLocale.value = antdDefaultLocale;
+      break;
+    }
+    case 'ja-JP': {
+      antdLocale.value = antdJaLocale;
+      break;
+    }
+    case 'ko-KR': {
+      antdLocale.value = antdKoLocale;
+      break;
+    }
+    case 'cs-CZ': {
+      antdLocale.value = antdCsLocale;
       break;
     }
   }

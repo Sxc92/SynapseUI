@@ -1,6 +1,6 @@
 import type { PageRequest, PageResponse } from '@vben/request';
 
-import { fullResponseClient, requestClient } from '#/api/request';
+import { requestClient } from '#/api/request';
 
 import { IAM_API_PREFIX } from './constants';
 
@@ -40,20 +40,12 @@ export async function getPage(
 /**
  * 创建或更新系统
  * 如果 data 中包含 id，则为更新；否则为新增
- * 使用 fullResponseClient 返回完整的响应对象（包括 code 和 msg）
+ * requestClient 已经判断过业务编码，成功时返回 data 字段的值
  */
 export async function addOrModifySystem(
   data: Partial<SystemApi.System> | SystemApi.System,
-): Promise<{ code: number | string; data?: any; msg: string }> {
-  // 使用 fullResponseClient 获取完整响应（包括 code 和 msg）
-  const response = await fullResponseClient.post<{
-    code: number | string;
-    data?: any;
-    msg: string;
-  }>(`${IAM_API_PREFIX}/system/addOrModify`, data);
-
-  // fullResponseClient 返回的是 AxiosResponse，需要提取 data
-  return response;
+): Promise<any> {
+  return requestClient.post<any>(`${IAM_API_PREFIX}/system/addOrModify`, data);
 }
 
 /**
@@ -74,21 +66,11 @@ export async function getSystemDetail(
 
 /**
  * 删除系统
- * 使用 POST 请求，在 body 中传递 id 数组
- * 使用 fullResponseClient 返回完整的响应对象（包括 code 和 msg）
+ * 使用 DELETE 请求，在 URL 中传递 id
+ * requestClient 已经判断过业务编码，成功时返回 data 字段的值
  */
-export async function deleteSystem(
-  id: string,
-): Promise<{ code: number | string; data?: any; msg: string }> {
-  // 使用 fullResponseClient 获取完整响应（包括 code 和 msg）
-  const response = await fullResponseClient.delete<{
-    code: number | string;
-    data?: any;
-    msg: string;
-  }>(`${IAM_API_PREFIX}/system/delete/${id}`);
-
-  // fullResponseClient 返回的是 AxiosResponse，需要提取 data
-  return response;
+export async function deleteSystem(id: string): Promise<any> {
+  return requestClient.delete<any>(`${IAM_API_PREFIX}/system/delete/${id}`);
 }
 
 /**
@@ -103,4 +85,41 @@ export async function getAllSystems(): Promise<SystemApi.System[]> {
       pageNum: 1,
     })
     .then((res) => res.records || []);
+}
+
+/**
+ * 获取系统列表（用于权限分配）
+ * 接口路径：GET /iam/system/list
+ * 返回所有启用状态的系统列表
+ * 
+ * 开发环境 Mock：
+ * - 方式1：设置环境变量 VITE_USE_MOCK=true 或 VITE_USE_MOCK_PERMISSION_API=true
+ * - 方式2：开发环境默认使用 Mock（如果后端不可用）
+ */
+export async function getSystemList(): Promise<SystemApi.System[]> {
+  // 开发环境使用 Mock 数据（可通过环境变量控制）
+  const useMock = import.meta.env.DEV && (
+    import.meta.env.VITE_USE_MOCK === 'true' || 
+    import.meta.env.VITE_USE_MOCK === '1' ||
+    import.meta.env.VITE_USE_MOCK_PERMISSION_API === 'true' ||
+    import.meta.env.VITE_USE_MOCK_PERMISSION_API === '1'
+  );
+  
+  if (useMock) {
+    const { mockPermissionApi } = await import('./mock/permission');
+    return mockPermissionApi.getSystemList();
+  }
+  
+  // 尝试调用真实 API，如果失败则降级到 Mock（仅开发环境）
+  if (import.meta.env.DEV) {
+    try {
+      return await requestClient.post<SystemApi.System[]>(`${IAM_API_PREFIX}/system/list`, {});
+    } catch (error) {
+      console.warn('[getSystemList] 后端 API 调用失败，降级到 Mock 数据:', error);
+      const { mockPermissionApi } = await import('./mock/permission');
+      return mockPermissionApi.getSystemList();
+    }
+  }
+  
+  return requestClient.post<SystemApi.System[]>(`${IAM_API_PREFIX}/system/list`, {});
 }

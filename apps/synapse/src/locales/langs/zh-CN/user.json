@@ -1,0 +1,14 @@
+{
+  "management": "用户管理",
+  "username": "用户名",
+  "usernamePlaceholder": "搜索用户名...",
+  "nickname": "昵称",
+  "email": "邮箱",
+  "emailPlaceholder": "搜索邮箱...",
+  "phone": "手机号",
+  "phonePlaceholder": "搜索手机号...",
+  "mobile": "手机号",
+  "account": "用户名",
+  "realName": "昵称"
+}
+

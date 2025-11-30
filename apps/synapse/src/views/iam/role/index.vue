@@ -1,19 +1,28 @@
 <script lang="ts" setup>
 import { Page } from '@vben/common-ui';
 
-// TODO: 实现角色管理功能
+import { ToolbarButtons } from '#/adapter/vxe-table/config';
+
+import { useRoleTable } from './roleTable';
+
+// 使用表格配置 Composable
+// 表格高度会根据每页条数自动调整（在 grid.ts 中处理）
+const { Grid, drawerForm, permissionDrawer, toolbarButtons } = useRoleTable();
 </script>
 
 <template>
   <div class="page-wrapper">
     <Page auto-content-height>
-      <div class="flex h-full items-center justify-center">
-        <div class="text-center">
-          <h2 class="mb-4 text-2xl font-semibold">角色管理</h2>
-          <p class="text-muted-foreground">角色管理功能开发中...</p>
-        </div>
-      </div>
+      <Grid>
+        <template #toolbar-tools>
+          <ToolbarButtons :buttons="toolbarButtons" />
+        </template>
+      </Grid>
     </Page>
+    <!-- Drawer Form 组件 -->
+    <drawerForm.Drawer />
+    <!-- 权限分配弹窗 -->
+    <permissionDrawer.Modal />
   </div>
 </template>
 

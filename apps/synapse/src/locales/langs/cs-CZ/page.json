@@ -1,0 +1,16 @@
+{
+  "auth": {
+    "login": "Přihlásit se",
+    "register": "Registrovat",
+    "codeLogin": "Přihlášení pomocí kódu",
+    "qrcodeLogin": "Přihlášení pomocí QR kódu",
+    "forgetPassword": "Zapomenuté heslo",
+    "profile": "Osobní centrum"
+  },
+  "dashboard": {
+    "title": "Přehled",
+    "analytics": "Analytická stránka",
+    "workspace": "Pracovní prostor"
+  }
+}
+

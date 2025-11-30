@@ -1,7 +1,16 @@
+import { ref } from 'vue';
+
+import { useAccess } from '@vben/access';
+
+import { message } from 'ant-design-vue';
+
+import { $t } from '#/locales';
+
+import { addOrModifyUser } from '#/api/iam/user';
 import { createGrid } from '#/adapter/vxe-table';
 import { getUserPage } from '#/api/iam/user';
 
-import { gridConfig } from './gridConfig';
+import { gridConfig } from './tableConfig';
 
 /**
  * 用户数据接口
@@ -21,53 +30,153 @@ export interface UserData {
 
 /**
  * 搜索表单配置
+ * 使用函数形式返回配置，避免函数被 structuredClone 处理
  */
-export const formOptions = {
+export const formOptions = () => ({
   collapsed: false,
   schema: [
     {
       component: 'Input',
       componentProps: {
         allowClear: true,
-        placeholder: '搜索用户名...',
+        placeholder: $t('user.usernamePlaceholder'),
       },
       fieldName: 'username',
-      label: '用户名',
+      label: $t('user.username'),
     },
     {
       component: 'Input',
       componentProps: {
         allowClear: true,
-        placeholder: '搜索邮箱...',
+        placeholder: $t('user.emailPlaceholder'),
       },
       fieldName: 'email',
-      label: '邮箱',
+      label: $t('user.email'),
     },
     {
       component: 'Input',
       componentProps: {
         allowClear: true,
-        placeholder: '搜索手机号...',
+        placeholder: $t('user.phonePlaceholder'),
       },
       fieldName: 'phone',
-      label: '手机号',
+      label: $t('user.phone'),
     },
     {
       component: 'Select',
       componentProps: {
         allowClear: true,
-        placeholder: '选择状态...',
+        placeholder: $t('common.selectStatusPlaceholder'),
         options: [
-          { label: '启用', value: 'active' },
-          { label: '禁用', value: 'inactive' },
+          { label: $t('common.enabled'), value: 'active' },
+          { label: $t('common.disabled'), value: 'inactive' },
         ],
       },
       fieldName: 'status',
-      label: '状态',
+      label: $t('common.status'),
     },
   ],
   collapseTriggerResize: false,
+});
+
+/**
+ * 状态配置类型：支持完整配置或仅文案配置
+ */
+type StatusConfig = {
+  color?: string;
+  icon?: string;
+  text: string;
 };
+
+/**
+ * 创建可点击的状态字段配置
+ * @param field 字段名
+ * @param statusMap 状态映射配置（支持完整配置或仅文案配置，如果只提供文案，会自动使用默认颜色和图标）
+ * @param permissionKey 权限标识（可选，如果未提供则默认允许）
+ * @param successMessage 成功提示消息
+ * @param gridApiRef 表格 API 引用
+ * @param reloadRef 刷新函数引用
+ */
+function createClickableStatusColumn(
+  field: string,
+  statusMap: Record<string, StatusConfig>,
+  permissionKey: string | undefined,
+  successMessage: string | undefined,
+  gridApiRef: ReturnType<typeof ref<any>>,
+  reloadRef: ReturnType<typeof ref<(() => void) | null>>,
+) {
+  // 权限检查工具
+  const { hasAccessByCodes } = useAccess();
+
+  // 默认颜色和图标配置
+  const defaultConfig = {
+    true: {
+      color: '#52c41a',
+      icon: 'mdi:check-circle',
+    },
+    false: {
+      color: '#ff4d4f',
+      icon: 'mdi:close-circle',
+    },
+  };
+
+  // 处理 statusMap：如果只提供了 text，自动填充默认的 color 和 icon
+  const processedStatusMap: Record<string, { color: string; icon: string; text: string }> = {};
+  for (const [key, config] of Object.entries(statusMap)) {
+    const defaultCfg = defaultConfig[key as 'true' | 'false'];
+    processedStatusMap[key] = {
+      color: config.color || defaultCfg?.color || '#666',
+      icon: config.icon || defaultCfg?.icon || 'mdi:circle',
+      text: config.text,
+    };
+  }
+
+  return {
+    field,
+    title: $t('common.status'),
+    cellRender: {
+      name: 'CellStatusIcon',
+      props: {
+        statusMap: processedStatusMap,
+        hasPermission: (_row: UserData) => {
+          // 如果未配置权限标识，默认允许操作
+          if (!permissionKey) {
+            return true;
+          }
+          // 使用权限码检查用户是否有权限
+          return hasAccessByCodes([permissionKey]);
+        },
+        onClick: async (
+          row: UserData,
+          fieldName: string,
+          newValue: boolean,
+        ) => {
+          try {
+            if (gridApiRef.value) {
+              gridApiRef.value.setLoading(true);
+            }
+            await addOrModifyUser({
+              id: row.id,
+              [fieldName]: newValue,
+            } as any);
+              message.success(successMessage || $t('common.success'));
+              (row as any)[fieldName] = newValue;
+              if (reloadRef.value) {
+                reloadRef.value();
+            }
+          } catch (error) {
+            // 错误信息已由拦截器统一处理并显示
+            console.error(error);
+          } finally {
+            if (gridApiRef.value) {
+              gridApiRef.value.setLoading(false);
+            }
+          }
+        },
+      },
+    },
+  };
+}
 
 /**
  * 用户表格配置 Composable
@@ -77,9 +186,13 @@ export const formOptions = {
  * @returns 表格组件和 API
  */
 export function useUserTable() {
+  // 使用 ref 存储 reload 函数和 API，避免循环依赖
+  const reloadRef = ref<(() => void) | null>(null);
+  const gridApiRef = ref<any>(null);
+
   // 使用 createGrid 创建表格实例
   const result = createGrid<UserData>({
-    tableTitle: '用户管理',
+    tableTitle: $t('user.management'),
     id: 'user-grid',
     pageSize: 10,
     formOptions,
@@ -92,61 +205,60 @@ export function useUserTable() {
       {
         type: 'seq',
         width: 60,
-        title: '序号',
+        title: $t('common.serialNumber'),
       },
       {
         field: 'account',
-        title: '用户名',
+        title: $t('user.account'),
         sortable: true,
       },
       {
         field: 'realName',
-        title: '昵称',
+        title: $t('user.realName'),
       },
       {
         field: 'email',
-        title: '邮箱',
+        title: $t('user.email'),
         sortable: true,
       },
       {
         field: 'mobile',
-        title: '手机号',
+        title: $t('user.mobile'),
       },
-      {
-        field: 'enabled',
-        title: '状态',
-        cellRender: {
-          name: 'CellStatusIcon',
-          props: {
-            statusMap: {
-              true: {
-                icon: 'mdi:check-circle',
-                color: '#52c41a',
-                text: '启用',
-              },
-              false: {
-                icon: 'mdi:close-circle',
-                color: '#ff4d4f',
-                text: '禁用',
-              },
-            },
+      // 状态字段：可点击切换启用/禁用
+      createClickableStatusColumn(
+        'enabled',
+        {
+          true: {
+            text: $t('common.enabled'),
+          },
+          false: {
+            text: $t('common.disabled'),
           },
         },
-      },
+        'user:status:update',
+        $t('common.success'),
+        gridApiRef,
+        reloadRef,
+      ),
       {
         field: 'createTime',
-        title: '创建时间',
+        title: $t('common.createTime'),
         sortable: true,
         formatter: 'formatDate',
       },
       {
         field: 'updateTime',
-        title: '更新时间',
+        title: $t('common.updateTime'),
         sortable: true,
         formatter: 'formatDate',
       },
     ],
   });
+
+  // 存储 reload 函数和 API
+  reloadRef.value = result.reload;
+  gridApiRef.value = result.api;
 
   // 获取选中记录
   function getSelectedRows(): UserData[] {

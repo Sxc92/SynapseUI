@@ -1,26 +1,42 @@
-import type { MenuData } from './types';
 
-import type { ToolbarButtonConfig } from '#/adapter/vxe-table/config';
+/**
+ * 菜单数据接口
+ */
+export interface MenuData {
+  id: string;
+  systemId: string;
+  parentId?: string;
+  code: string;
+  name: string;
+  icon?: string;
+  router?: string;
+  component?: string;
+  visible: boolean;
+  status: boolean;
+  // 树形结构支持：子菜单列表
+  children?: MenuData[];
+}
 
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 
 import { useAccess } from '@vben/access';
-import { Plus } from '@vben/icons';
 
 import { createDrawerForm } from '#/adapter/drawer-form';
 import { createGrid } from '#/adapter/vxe-table';
-import { createToolbarButtons } from '#/adapter/vxe-table/config';
-import { addOrModifyMenu, getMenuDetail, getMenuPage } from '#/api/iam/menu';
+import { createToolbarButtonsSimple } from '#/adapter/vxe-table/config';
+import {
+  addOrModifyMenu,
+  getMenuDetail,
+  getMenuTreePage,
+} from '#/api/iam/menu';
 
 import { createColumns } from './columns';
 import { drawerFormSchema } from './drawerFormSchema';
-import { formOptions } from './formOptions';
-import { gridConfig } from './gridConfig';
+import { formOptions, gridConfig } from './tableConfig';
+import { $t } from '@vben/locales';
 
-// 图标映射表：将配置中的图标名称映射到实际的图标组件
-const iconMap: Record<string, any> = {
-  Plus,
-};
+// 图标映射表：用于自定义按钮的图标组件映射（可选）
+const iconMap: Record<string, any> = {};
 
 /**
  * 菜单表格配置 Composable
@@ -33,6 +49,9 @@ export function useMenuTable() {
   // 使用 ref 存储 reload 函数和 API，避免循环依赖
   const reloadRef = ref<(() => void) | null>(null);
   const gridApiRef = ref<any>(null);
+  
+  // 标记是否是工具栏新增（顶级菜单）
+  const isToolbarCreate = ref(false);
 
   // 权限检查工具
   const { hasAccessByCodes } = useAccess();
@@ -40,11 +59,12 @@ export function useMenuTable() {
   // 先创建 Drawer Form 实例
   const drawerForm = createDrawerForm<MenuData>({
     title: {
-      create: '新增菜单',
-      edit: '编辑菜单',
-      view: '查看菜单详情',
+      create: $t('menu.create'),
+      edit: $t('menu.edit'),
+      view: $t('menu.view'),
     },
-    formSchema: drawerFormSchema,
+    formSchema: (mode, currentRow) =>
+      drawerFormSchema(mode, currentRow, isToolbarCreate),
     api: {
       create: (data: any) => {
         // 确保不包含 id，明确是新增
@@ -73,19 +93,71 @@ export function useMenuTable() {
     },
   });
 
+  // 包装 openCreate 函数，支持传入初始值（用于新增下级菜单）
+  const openCreateWithInitialValues = async (initialValues?: {
+    parentId?: string;
+    systemId?: string;
+  }) => {
+    // 判断是否是工具栏新增（没有 parentId）
+    isToolbarCreate.value = !initialValues?.parentId;
+    
+    drawerForm.openCreate();
+    // 等待表单初始化完成
+    await nextTick();
+    
+      const formApi = drawerForm.getFormApi();
+      if (formApi && initialValues) {
+      // 如果是行内新增（有 parentId），只需要设置 parentId
+      // parentId 会触发父菜单字段的显示，并且父菜单字段会可用
+      if (initialValues.parentId) {
+        // 如果有 systemId，先设置 systemId，等待树数据加载
+        if (initialValues.systemId) {
+          formApi.setFieldValue('systemId', initialValues.systemId);
+          // 等待 ApiTreeSelect 的树数据加载完成（需要多个 tick）
+          await nextTick();
+          await nextTick();
+          // 额外等待一段时间，确保树数据已加载
+          await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+        // 然后设置 parentId（此时树数据应该已经加载完成）
+        formApi.setFieldValue('parentId', initialValues.parentId);
+      } else if (initialValues.systemId) {
+        // 如果是工具栏新增（没有 parentId），只设置 systemId
+        // 父菜单字段会自动禁用（通过 drawerFormSchema 中的逻辑判断）
+        formApi.setFieldValue('systemId', initialValues.systemId);
+      }
+    }
+  };
+
   // 使用 createGrid 创建表格实例
   const result = createGrid<MenuData>({
-    tableTitle: '菜单管理',
+    tableTitle: $t('menus.menu'),
     id: 'menu-grid',
     pageSize: 10,
     formOptions,
     api: {
-      getPage: getMenuPage,
+      getPage: getMenuTreePage, // 使用树形分页接口
+    },
+    // 启用树形结构配置
+    // 注意：后端返回的数据已经是树形结构（包含 children 数组），所以 transform 应该设置为 false
+    treeConfig: {
+      parentField: 'parentId',
+      rowField: 'id',
+      children: 'children', // 子节点字段名
+      expandAll: false, // 默认折叠
+      indent: 20, // 缩进 20px
+      transform: false, // 数据已经是树形结构，不需要转换
     },
     // 使用 gridConfig.ts 中的配置
     gridProps: gridConfig,
     columns: () =>
-      createColumns(drawerForm, gridApiRef, reloadRef, hasAccessByCodes),
+      createColumns(
+        drawerForm,
+        openCreateWithInitialValues,
+        gridApiRef,
+        reloadRef,
+        hasAccessByCodes,
+      ),
   });
 
   // 存储 reload 函数和 API
@@ -101,37 +173,32 @@ export function useMenuTable() {
   }
 
   // 工具栏按钮配置
-  // 定义工具栏中需要显示的按钮配置
-  const toolbarButtonsConfig: ToolbarButtonConfig[] = [
-    {
-      textKey: 'add',
-      type: 'primary',
-      icon: 'Plus',
-      // 如果不需要权限检查，可以移除 accessCodes 或设置为 undefined
-      // accessCodes: ['menu:create'], // 需要权限检查时使用
-    },
-  ];
-
-  // 创建工具栏按钮配置
-  // 使用通用工厂函数处理按钮配置，绑定实际的事件处理器
-  const toolbarButtons = createToolbarButtons({
-    configs: toolbarButtonsConfig,
+  // 工具栏按钮配置
+  // 使用简化的配置方式，支持默认新增按钮和自定义按钮
+  const toolbarButtons = createToolbarButtonsSimple({
     hasAccessByCodes,
     iconMap,
-    eventHandlers: {
-      // 根据 textKey 绑定到对应的操作
-      add: () => {
-        drawerForm.openCreate();
+    addButton: {
+      accessCodes: ['menu:create'],
+      action: () => {
+        openCreateWithInitialValues();
       },
-      // 可以在这里添加其他 textKey 的事件处理器
-      // 例如：'export' -> () => exportData(), 'import' -> () => importData() 等
     },
+    // 可以在这里添加其他自定义按钮
+    // customButtons: [
+    //   {
+    //     textKey: 'common.export',
+    //     type: 'default',
+    //     icon: 'Download',
+    //     onClick: () => exportData(),
+    //   },
+    // ],
   });
 
   return {
     // 表格组件
     Grid: result.Grid,
-    // 表格 API
+    // 表格 API（包含 setFieldValueAndSearch 方法）
     gridApi: result.api,
     // Drawer Form
     drawerForm,
@@ -141,5 +208,7 @@ export function useMenuTable() {
     getSelectedRows,
     reload: result.reload,
     setLoading: result.setLoading,
+    // 直接暴露 setFieldValueAndSearch 方法，确保可以访问
+    setFieldValueAndSearch: result.setFieldValueAndSearch,
   };
 }

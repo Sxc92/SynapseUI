@@ -1,0 +1,14 @@
+{
+  "management": "Správa uživatelů",
+  "username": "Uživatelské jméno",
+  "usernamePlaceholder": "Vyhledat uživatelské jméno...",
+  "nickname": "Přezdívka",
+  "email": "E-mail",
+  "emailPlaceholder": "Vyhledat e-mail...",
+  "phone": "Telefonní číslo",
+  "phonePlaceholder": "Vyhledat telefonní číslo...",
+  "mobile": "Mobilní telefon",
+  "account": "Účet",
+  "realName": "Skutečné jméno"
+}
+

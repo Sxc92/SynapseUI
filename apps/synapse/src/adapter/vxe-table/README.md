@@ -379,8 +379,160 @@ setupVbenVxeTable({
 });
 ```
 
+## createGrid - 表格工厂函数
+
+`createGrid` 是一个高级表格工厂函数，提供了开箱即用的表格配置，包括：
+- 自动分页配置
+- 表单自动搜索（blur 和 clear 事件）
+- 状态开关和操作按钮的快速创建
+- 树形结构支持
+- 序列号自动计算
+
+### 基础使用
+
+```typescript
+import { createGrid } from '#/adapter/vxe-table';
+
+interface MenuData {
+  id: number;
+  name: string;
+  status: boolean;
+}
+
+const { Grid, api, createStatusSwitch, createActionButtons } = createGrid<MenuData>({
+  tableTitle: '菜单管理',
+  formOptions: {
+    schema: [
+      { component: 'Input', fieldName: 'name', label: '名称' },
+    ],
+  },
+  api: {
+    getPage: getMenuPage,
+    enable: enableMenu,
+    remove: deleteMenu,
+  },
+  pageSize: 20,
+  columns: ({ createStatusSwitch, createActionButtons }) => [
+    { field: 'name', title: '名称' },
+    {
+      field: 'status',
+      title: '状态',
+      cellRender: {
+        name: 'VNode',
+        props: {
+          vnode: (params: any) => createStatusSwitch(params.row),
+        },
+      },
+    },
+    {
+      title: '操作',
+      cellRender: {
+        name: 'VNode',
+        props: {
+          vnode: (params: any) => createActionButtons(params.row),
+        },
+      },
+    },
+  ],
+});
+```
+
+### createStandardActions - 标准化操作按钮
+
+`createStandardActions` 用于创建标准化的操作按钮配置，统一处理国际化、权限检查和消息提示。
+
+```typescript
+import { createStandardActions } from '#/adapter/vxe-table';
+
+const actions = createStandardActions<MenuData>(
+  [
+    {
+      textKey: 'common.view',
+      accessCodes: ['menu:view'],
+      onClick: (row) => drawerForm.openView(row),
+      noPermissionKey: 'menu.noPermissionToView',
+    },
+    {
+      textKey: 'common.delete',
+      accessCodes: ['menu:delete'],
+      danger: true,
+      confirmKey: 'menu.deleteConfirm',
+      onClick: async (row) => {
+        const response = await deleteMenu(row.id);
+        if (response.code === 200) {
+          message.success($t('common.deleteSuccess'));
+          gridApi.reload();
+        }
+      },
+      noPermissionKey: 'menu.noPermissionToDelete',
+    },
+  ],
+  {
+    hasAccessByCodes,
+    message,
+    gridApi: () => gridApiRef.value,
+    reload: () => gridApiRef.value.reload(),
+  }
+);
+
+// 在列配置中使用
+{
+  title: '操作',
+  cellRender: {
+    name: 'CellActions',
+    props: { actions },
+  },
+}
+```
+
+## 模块化架构
+
+为了更好的代码组织和维护性，`grid.ts` 已被拆分为多个模块：
+
+### 目录结构
+
+```
+vxe-table/
+├── types/
+│   └── grid.ts              # 类型定义（ApiMethods, GridOptions, GridInstance, StandardActionConfig）
+├── utils/
+│   ├── pager.ts             # 分页相关工具（createPagerIcons, createSeqConfig）
+│   ├── actions.ts           # 操作按钮工具（createStandardActions）
+│   ├── tree-config.ts       # 树形配置处理（normalizeTreeConfig）
+│   ├── grid-helpers.ts      # 表格辅助函数（createStatusSwitchFactory, createActionButtonsFactory）
+│   ├── form-search.ts       # 表单自动搜索逻辑（processFormOptions, createSetFieldValueAndSearch）
+│   └── default-config.ts    # 默认配置生成（createDefaultGridProps）
+├── config/                  # 配置中心
+├── grid.ts                  # 主函数（整合所有模块）
+└── README.md                # 使用文档
+```
+
+### 统一导出
+
+所有功能都通过 `#/adapter/vxe-table` 统一导出，无需关心内部模块结构：
+
+```typescript
+import {
+  // 核心 API
+  useVbenVxeGrid,
+  createGrid,
+  createStandardActions,
+  
+  // 类型
+  type GridOptions,
+  type GridInstance,
+  type StandardActionConfig,
+  
+  // 配置和工具
+  defaultGridConfig,
+  formatMoney,
+  // ...
+} from '#/adapter/vxe-table';
+```
+
 ## 更多示例
 
 参考项目中的示例文件：
 
 - `playground/src/views/examples/vxe-table/` - 各种使用示例
+- `apps/synapse/src/views/iam/menu/` - 菜单管理表格示例（使用 createGrid）

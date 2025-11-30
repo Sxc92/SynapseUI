@@ -49,10 +49,19 @@ export {
   registerFormatters,
   registerRenderers,
 } from './vxe-table/config';
-// 导出 Grid 组件
-export { createGrid } from './vxe-table/grid';
+// 导出 Grid 组件和相关功能
+export {
+  createGrid,
+  createStandardActions,
+} from './vxe-table/grid';
 
-export type { ApiMethods, GridInstance, GridOptions } from './vxe-table/grid';
+// 导出类型定义
+export type {
+  ApiMethods,
+  GridInstance,
+  GridOptions,
+  StandardActionConfig,
+} from './vxe-table/grid';
 export type * from './vxe-table/types';
 
 // 导出类型定义

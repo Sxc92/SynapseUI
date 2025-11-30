@@ -1,0 +1,21 @@
+{
+  "management": "Správa systémů",
+  "create": "Vytvořit systém",
+  "edit": "Upravit systém",
+  "view": "Zobrazit podrobnosti systému",
+  "code": "Kód systému",
+  "codePlaceholder": "Zadejte kód systému",
+  "name": "Název systému",
+  "namePlaceholder": "Zadejte název systému",
+  "sorted": "Řazení",
+  "sortedPlaceholder": "Zadejte řazení",
+  "systemStatus": "Stav systému",
+  "searchCodePlaceholder": "Vyhledat kód systému...",
+  "searchNamePlaceholder": "Vyhledat název systému...",
+  "deleteConfirm": "Opravdu chcete smazat tento systém? Po smazání nelze obnovit.",
+  "listTitle": "Seznam systémů",
+  "loading": "Načítání...",
+  "empty": "Žádné systémy",
+  "selectPlaceholder": "Vybrat systém..."
+}
+

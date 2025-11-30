@@ -1,0 +1,25 @@
+{
+  "back": "Zpět",
+  "backToHome": "Zpět na domů",
+  "login": "Přihlásit se",
+  "logout": "Odhlásit se",
+  "prompt": "Výzva",
+  "cancel": "Zrušit",
+  "confirm": "Potvrdit",
+  "reset": "Obnovit",
+  "noData": "Žádná data",
+  "refresh": "Obnovit",
+  "loadingMenu": "Načítání menu",
+  "query": "Vyhledat",
+  "search": "Hledat",
+  "enabled": "Povoleno",
+  "disabled": "Zakázáno",
+  "edit": "Upravit",
+  "delete": "Smazat",
+  "create": "Vytvořit",
+  "yes": "Ano",
+  "no": "Ne",
+  "showSearchPanel": "Zobrazit vyhledávací panel",
+  "hideSearchPanel": "Skrýt vyhledávací panel"
+}
+

@@ -62,6 +62,11 @@ export interface DrawerFormOptions<T = any> {
   destroyOnClose?: boolean;
   /** 表单栅格布局类名，默认为 'grid-cols-2' */
   wrapperClass?: string;
+  /** 表单值变化回调 */
+  handleValuesChange?: (
+    values: Record<string, any>,
+    fieldsChanged: string[],
+  ) => void;
 }
 
 /**
@@ -166,21 +171,29 @@ export function createDrawerForm<T = any>(
     reactive({
       commonConfig: {
         componentProps: {
-          class: 'w-full',
+          class: 'w-full drawer-form-input', // 添加自定义类名，用于统一样式
         },
-        // 设置标签宽度，水平布局时标签和输入框在同一行
-        labelWidth: 100,
+        // 使用 controlClass 来设置控件样式
+        controlClass: 'drawer-form-control', // 统一控件样式类
+        // 垂直布局时不需要设置 labelWidth
+        // labelWidth: 120, // 垂直布局时不需要固定标签宽度
         // 标签后显示冒号
         colon: true,
+        // 表单项包装器样式：只增加间距
+        wrapperClass: 'mb-2', // 表单项之间的间距（减小间距）
+        // 标签样式：增加字体大小
+        labelClass: 'text-base font-medium', // 标签字体大小和粗细
       },
-      // 使用水平布局：标签和输入框在同一行，更紧凑美观
-      layout: 'horizontal',
+      // 使用垂直布局：标签和输入框分两行显示
+      layout: 'vertical',
       // 使用栅格布局，支持字段并排显示（默认2列布局，可通过 wrapperClass 自定义）
-      wrapperClass: options.wrapperClass || 'grid-cols-2',
+      wrapperClass: options.wrapperClass || 'grid-cols-2 gap-6', // 增加列之间的间距
       schema: formSchema,
       showDefaultActions: false,
-      // 紧凑模式，减少表单项之间的间距
-      compact: true,
+      // 不使用紧凑模式，增加表单项之间的间距
+      compact: false,
+      // 表单值变化回调
+      handleValuesChange: options.handleValuesChange,
     }),
   );
 
@@ -213,21 +226,27 @@ export function createDrawerForm<T = any>(
         throw new Error('API method not provided');
       }
 
-      // 判断是否成功：null 或 false 表示失败，true 表示成功
-      // 如果返回的是响应对象，提取 msg 和 data
+      // 判断是否成功：requestClient 返回的是 data 字段的值
+      // 如果返回 true 或 truthy 值，表示成功；如果返回 false 或 null，表示失败
+      // 如果返回的是对象且包含 data 字段（兼容旧格式），提取 data
       let isSuccess = false;
       let msg = '';
 
       if (typeof result === 'object' && result !== null) {
-        // 如果是响应对象，提取 msg
+        // 兼容旧格式：{ data: true/false, msg: string }
+        if ('data' in result) {
+          isSuccess = result.data === true;
         msg = result.msg || '';
-        // 判断成功：data === true 表示成功，data === false 或 null 表示失败
-        isSuccess = result.data === true;
+        } else {
+          // 新格式：直接返回 data 值，非空对象视为成功
+          isSuccess = true;
+        }
       } else {
-        // 如果是基本类型：true 成功，null/false 失败
-        isSuccess = result === true;
+        // 基本类型：true 成功，null/false 失败
+        isSuccess = result === true || (result !== null && result !== false);
         msg = '';
       }
+
       if (isSuccess) {
         message.success(msg || $t('common.success'));
         options.onSuccess?.(mode.value, values);
@@ -266,11 +285,8 @@ export function createDrawerForm<T = any>(
         return;
       }
 
-      // 如果返回的是整个响应对象，提取 data 字段
-      const data =
-        typeof result === 'object' && result.code !== undefined && result.data
-          ? result.data
-          : result;
+      // requestClient 已经提取了 data 字段，直接使用 result
+      const data = result;
 
       // 设置表单值
       if (data && typeof data === 'object') {
@@ -361,9 +377,9 @@ export function createDrawerForm<T = any>(
     footer: mode.value !== 'view',
     confirmText:
       mode.value === 'create'
-        ? $t('confirm')
+        ? $t('common.confirm')
         : mode.value === 'edit'
-          ? $t('common.save')
+          ? $t('common.confirm')
           : $t('common.confirm'),
     onConfirm: handleSubmit,
     cancelText: $t('common.cancel'),
@@ -386,9 +402,9 @@ export function createDrawerForm<T = any>(
         footer: mode.value !== 'view',
         confirmText:
           mode.value === 'create'
-            ? $t('confirm')
+            ? $t('common.confirm')
             : mode.value === 'edit'
-              ? $t('common.save')
+              ? $t('common.confirm')
               : $t('common.confirm'),
         showCancelButton: mode.value !== 'view',
       });

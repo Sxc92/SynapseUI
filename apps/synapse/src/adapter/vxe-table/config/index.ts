@@ -21,10 +21,15 @@ export { defaultGridConfig } from './grid-config';
 export { registerRenderers } from './renderers';
 export {
   createToolbarButtons,
+  createToolbarButtonsSimple,
   type CreateToolbarButtonsOptions,
+  type CreateToolbarButtonsSimpleOptions,
+  type DefaultAddButtonConfig,
   type ProcessedToolbarButton,
   type ToolbarButtonConfig,
 } from './toolbar-config';
+
+export { default as ToolbarButtons } from '../components/ToolbarButtons.vue';
 
 // 注意：formatNumber 是格式化器名称，不是函数，不需要导出
 // 如果需要格式化函数，可以从 formatters.ts 中导出

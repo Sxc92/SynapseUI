@@ -1,0 +1,21 @@
+{
+  "management": "系统管理",
+  "create": "新增系统",
+  "edit": "编辑系统",
+  "view": "查看系统详情",
+  "code": "系统编码",
+  "codePlaceholder": "请输入系统编码",
+  "name": "系统名称",
+  "namePlaceholder": "请输入系统名称",
+  "sorted": "排序",
+  "sortedPlaceholder": "请输入排序",
+  "systemStatus": "系统状态",
+  "searchCodePlaceholder": "搜索系统编码...",
+  "searchNamePlaceholder": "搜索系统名称...",
+  "deleteConfirm": "确定要删除该系统吗？删除后无法恢复。",
+  "listTitle": "系统列表",
+  "loading": "加载中...",
+  "empty": "暂无系统",
+  "selectPlaceholder": "选择系统..."
+}
+

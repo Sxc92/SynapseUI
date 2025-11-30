@@ -1,0 +1,18 @@
+{
+  "dashboard": "Nástěnka",
+  "workspace": "Pracovní prostor",
+  "mdm": "Hlavní datové centrum",
+  "country": "Správa zemí",
+  "iam": "Jednotné centrum identit",
+  "userAndOrg": "Uživatelé a organizace",
+  "user": "Správa uživatelů",
+  "organization": "Správa organizační struktury",
+  "position": "Správa pozic",
+  "systemAndApp": "Systémy a aplikace",
+  "system": "Správa systémů",
+  "permissionConfig": "Konfigurace oprávnění",
+  "role": "Správa rolí",
+  "menu": "Správa menu",
+  "resource": "Správa zdrojů"
+}
+

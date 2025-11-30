@@ -1,0 +1,14 @@
+{
+  "management": "User Management",
+  "username": "Username",
+  "usernamePlaceholder": "Search username...",
+  "nickname": "Nickname",
+  "email": "Email",
+  "emailPlaceholder": "Search email...",
+  "phone": "Phone",
+  "phonePlaceholder": "Search phone...",
+  "mobile": "Mobile",
+  "account": "Account",
+  "realName": "Real Name"
+}
+

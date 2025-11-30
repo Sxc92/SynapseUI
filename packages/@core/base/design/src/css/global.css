@@ -159,70 +159,87 @@ html.grayscale-mode {
   @apply grayscale;
 }
 
-/* 全局 disabled 样式：高亮、黑体加粗 */
+/* Switch 组件禁用状态：高亮显示，保留原有样式，只禁用点击 */
 @layer base {
-  /* 原生 HTML 元素的 disabled 属性 */
-  input[disabled],
-  button[disabled],
-  select[disabled],
-  textarea[disabled],
-  [disabled] {
-    font-weight: 700 !important; /* 黑体加粗 */
-    color: hsl(var(--foreground)) !important; /* 高亮：使用前景色 */
-    background-color: hsl(var(--muted) / 60%) !important;
-    border-color: hsl(var(--border)) !important;
-    border-width: 1.5px !important;
-    opacity: 1 !important;
-  }
-
-  /* Ant Design Vue 组件的 disabled 状态 */
-  .ant-btn[disabled],
-  .ant-btn-disabled,
-  .ant-input[disabled],
-  .ant-input-disabled,
-  .ant-select-disabled .ant-select-selector,
-  .ant-select.ant-select-disabled,
-  .ant-input-number-disabled,
-  .ant-input-number[disabled],
-  .ant-picker-disabled,
-  .ant-picker[disabled],
-  .ant-radio-disabled,
-  .ant-checkbox-disabled,
   .ant-switch-disabled,
-  .ant-slider-disabled,
-  .ant-rate-disabled {
-    font-weight: 700 !important; /* 黑体加粗 */
-    color: hsl(var(--foreground)) !important; /* 高亮：使用前景色 */
-    background-color: hsl(var(--muted) / 60%) !important;
-    border-color: hsl(var(--border)) !important;
-    border-width: 1.5px !important;
+  .ant-switch[disabled],
+  .ant-switch.ant-switch-disabled {
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    opacity: 1 !important; /* 确保完全可见，覆盖 Ant Design 默认的 opacity: 0.4 */
+    font-weight: normal !important;
+    border-color: revert !important;
+    border-width: revert !important;
+    color: revert !important;
+    /* 高亮效果：添加边框和阴影 */
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Switch 启用状态（checked）禁用时：高亮绿色 */
+  .ant-switch-disabled.ant-switch-checked,
+  .ant-switch[disabled].ant-switch-checked,
+  .ant-switch.ant-switch-disabled.ant-switch-checked {
+    background-color: #52c41a !important; /* 保持绿色 */
     opacity: 1 !important;
+    /* 高亮效果：添加更明显的边框和阴影 */
+    box-shadow: 0 0 0 2px rgba(82, 196, 26, 0.3), 0 2px 6px rgba(82, 196, 26, 0.2) !important;
+    border: 1px solid rgba(82, 196, 26, 0.5) !important;
   }
 
-  /* Ant Design Vue 组件内部文本的 disabled 状态 */
-  .ant-btn[disabled] span,
-  .ant-btn-disabled span,
-  .ant-btn[disabled] .anticon,
-  .ant-btn-disabled .anticon,
-  .ant-input[disabled]::placeholder,
-  .ant-input-disabled::placeholder,
-  .ant-select-disabled .ant-select-selection-item,
-  .ant-select-disabled .ant-select-selection-placeholder {
-    font-weight: 700 !important; /* 黑体加粗 */
-    color: hsl(var(--foreground)) !important; /* 高亮：使用前景色 */
+  /* Switch 禁用状态（unchecked）禁用时：高亮灰色 */
+  .ant-switch-disabled:not(.ant-switch-checked),
+  .ant-switch[disabled]:not(.ant-switch-checked),
+  .ant-switch.ant-switch-disabled:not(.ant-switch-checked) {
+    background-color: rgba(0, 0, 0, 0.35) !important; /* 更深的灰色，提高对比度 */
+    opacity: 1 !important;
+    font-weight: 700 !important; /* 加粗 */
+    /* 高亮效果：添加边框和阴影 */
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+    border: 1px solid rgba(0, 0, 0, 0.3) !important;
   }
 
-  /* VxeTable 组件的 disabled 状态 */
-  .vxe-input--inner[disabled],
-  .vxe-input[disabled],
-  .vxe-button.is--disabled,
-  .vxe-button[disabled],
-  .vxe-select[disabled] {
-    font-weight: 700 !important; /* 黑体加粗 */
-    color: hsl(var(--foreground)) !important; /* 高亮：使用前景色 */
-    background-color: hsl(var(--muted) / 60%) !important;
-    border-color: hsl(var(--border)) !important;
-    border-width: 1.5px !important;
+  /* Switch 内部元素的禁用状态 */
+  .ant-switch-disabled .ant-switch-inner,
+  .ant-switch[disabled] .ant-switch-inner,
+  .ant-switch-disabled .ant-switch-handle,
+  .ant-switch[disabled] .ant-switch-handle,
+  .ant-switch.ant-switch-disabled .ant-switch-inner,
+  .ant-switch.ant-switch-disabled .ant-switch-handle {
+    opacity: 1 !important; /* 确保内部元素也完全可见 */
+  }
+
+  /* VbenInput 组件禁用状态：加粗字体和深色文字 */
+  input[disabled]:not(.ant-input):not([class*='ant-']) {
+    font-weight: 700 !important;
+    opacity: 1 !important;
+    cursor: not-allowed !important;
+    color: rgba(0, 0, 0, 0.85) !important; /* 深色文字，提高对比度 */
+    -webkit-text-fill-color: rgba(0, 0, 0, 0.85) !important; /* Safari 浏览器支持 */
+  }
+
+  /* TreeSelect 禁用状态：提高对比度 */
+  .ant-tree-select-disabled .ant-select-selector,
+  .ant-tree-select.ant-tree-select-disabled .ant-select-selector,
+  .ant-tree-select[disabled] .ant-select-selector,
+  .ant-tree-select-disabled .ant-select .ant-select-selector,
+  .ant-tree-select.ant-tree-select-disabled .ant-select .ant-select-selector,
+  .ant-tree-select[disabled] .ant-select .ant-select-selector {
+    color: rgba(0, 0, 0, 0.85) !important;
+    font-weight: 700 !important;
+    opacity: 1 !important;
+    cursor: not-allowed !important;
+    background-color: #f5f5f5 !important; /* 浅灰色背景，提高对比度 */
+    border-color: #d9d9d9 !important; /* 边框颜色 */
+  }
+
+  .ant-tree-select-disabled .ant-select-selector .ant-select-selection-item,
+  .ant-tree-select.ant-tree-select-disabled .ant-select-selector .ant-select-selection-item,
+  .ant-tree-select[disabled] .ant-select-selector .ant-select-selection-item,
+  .ant-tree-select-disabled .ant-select .ant-select-selector .ant-select-selection-item,
+  .ant-tree-select.ant-tree-select-disabled .ant-select .ant-select-selector .ant-select-selection-item,
+  .ant-tree-select[disabled] .ant-select .ant-select-selector .ant-select-selection-item {
+    color: rgba(0, 0, 0, 0.85) !important;
+    font-weight: 700 !important;
     opacity: 1 !important;
   }
 }

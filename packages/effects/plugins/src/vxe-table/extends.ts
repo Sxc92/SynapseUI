@@ -40,50 +40,21 @@ function extendProxyOption(
     customValues: Recordable<any>,
     ...args: Recordable<any>[]
   ) => {
-    console.log(`[extendProxyOptions.${key}] 1. 包装函数被调用:`);
-    console.log(`  - params:`, params);
-    console.log(`  - customValues:`, customValues);
-    console.log(
-      `  - customValues 类型:`,
-      typeof customValues,
-      Array.isArray(customValues),
-    );
-    console.log(
-      `  - customValues 是 PointerEvent:`,
-      customValues instanceof PointerEvent,
-    );
-
     const formValues = getFormValues();
-    console.log(
-      `[extendProxyOptions.${key}] 2. getFormValues() 返回的值:`,
-      formValues,
-    );
-    console.log(
-      `[extendProxyOptions.${key}] 3. formValues 类型:`,
-      typeof formValues,
-      Array.isArray(formValues),
-    );
-    console.log(
-      `[extendProxyOptions.${key}] 4. formValues 键:`,
-      formValues ? Object.keys(formValues) : 'null/undefined',
-    );
 
     const mergedValues = {
       /**
        * 开启toolbarConfig.refresh功能
        * 点击刷新按钮 这里的值为PointerEvent 会携带错误参数
        */
-      ...(customValues instanceof PointerEvent ? {} : customValues),
+      // 先使用 formValues 作为基础值
       ...formValues,
+      // 然后使用 customValues 覆盖，确保传入的自定义值（如自动搜索时的最新值）优先
+      // 这样当自动搜索时传入的最新表单值可以覆盖 getLatestSubmissionValues() 中可能过时的值
+      ...(customValues instanceof PointerEvent ? {} : customValues),
     };
-    console.log(`[extendProxyOptions.${key}] 5. 合并后的值:`, mergedValues);
-    console.log(
-      `[extendProxyOptions.${key}] 6. 合并后的值键:`,
-      Object.keys(mergedValues),
-    );
 
     const data = await configFn(params, mergedValues, ...args);
-    console.log(`[extendProxyOptions.${key}] 7. configFn 执行完成`);
     return data;
   };
   api.setState({

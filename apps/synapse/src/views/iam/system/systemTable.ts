@@ -1,21 +1,29 @@
-import type { SystemData } from './types';
-
 import type { DrawerFormMode } from '#/adapter/drawer-form';
 import type { VbenFormSchema } from '#/adapter/form';
-import type { ToolbarButtonConfig } from '#/adapter/vxe-table/config';
+
+/**
+ * 系统数据接口
+ */
+export interface SystemData {
+  id: string;
+  code: string;
+  name: string;
+  status: boolean;
+  sorted: number;
+}
 
 import { ref } from 'vue';
 
 import { useAccess } from '@vben/access';
-import { Plus } from '@vben/icons';
-import { $t } from '@vben/locales';
 
 import { message } from 'ant-design-vue';
 
+import { $t } from '#/locales';
+
 import { createDrawerForm } from '#/adapter/drawer-form';
 import { z } from '#/adapter/form';
-import { createGrid } from '#/adapter/vxe-table';
-import { createToolbarButtons } from '#/adapter/vxe-table/config';
+import { createGrid, createStandardActions } from '#/adapter/vxe-table';
+import { createToolbarButtonsSimple } from '#/adapter/vxe-table/config';
 import {
   addOrModifySystem,
   deleteSystem,
@@ -23,17 +31,16 @@ import {
   getSystemDetail,
 } from '#/api/iam/system';
 
-import { gridConfig } from './gridConfig';
+import { gridConfig } from './tableConfig';
 
-// 图标映射表：将配置中的图标名称映射到实际的图标组件
-const iconMap: Record<string, any> = {
-  Plus,
-};
+// 图标映射表：用于自定义按钮的图标组件映射（可选）
+const iconMap: Record<string, any> = {};
 
 /**
  * 搜索表单配置
+ * 使用函数形式返回配置，避免函数被 structuredClone 处理
  */
-export const formOptions = {
+export const formOptions = () => ({
   collapsed: false,
   // 显示搜索按钮（手动触发搜索）
   submitButtonOptions: {
@@ -48,36 +55,36 @@ export const formOptions = {
       component: 'SynapseInput',
       componentProps: {
         allowClear: true,
-        placeholder: '搜索系统编码...',
+        placeholder: $t('system.searchCodePlaceholder'),
       },
       fieldName: 'code',
-      label: '系统编码',
+      label: $t('system.code'),
     },
     {
       component: 'SynapseInput',
       componentProps: {
         allowClear: true,
-        placeholder: '搜索系统名称...',
+        placeholder: $t('system.searchNamePlaceholder'),
       },
       fieldName: 'name',
-      label: '系统名称',
+      label: $t('system.name'),
     },
     {
       component: 'VbenSelect',
       componentProps: {
         allowClear: true,
-        placeholder: '选择状态...',
+        placeholder: $t('common.selectStatusPlaceholder'),
         options: [
-          { label: '启用', value: 'true' },
-          { label: '禁用', value: 'false' },
+          { label: $t('common.enabled'), value: 'true' },
+          { label: $t('common.disabled'), value: 'false' },
         ],
       },
       fieldName: 'status',
-      label: '状态',
+      label: $t('common.status'),
     },
   ],
   collapseTriggerResize: false,
-};
+});
 
 /**
  * Drawer Form 表单配置
@@ -90,31 +97,31 @@ const drawerFormSchema = (mode: DrawerFormMode): VbenFormSchema[] => {
     {
       component: 'VbenInput',
       componentProps: {
-        placeholder: '请输入系统编码',
+        placeholder: $t('system.codePlaceholder'),
       },
       fieldName: 'code',
-      label: '系统编码',
-      rules: z.string().min(1, { message: '请输入系统编码' }),
+      label: $t('system.code'),
+      rules: z.string().min(1, { message: $t('system.codePlaceholder') }),
     },
     {
       component: 'VbenInput',
       componentProps: {
-        placeholder: '请输入系统名称',
+        placeholder: $t('system.namePlaceholder'),
       },
       fieldName: 'name',
-      label: '系统名称',
-      rules: z.string().min(1, { message: '请输入系统名称' }),
+      label: $t('system.name'),
+      rules: z.string().min(1, { message: $t('system.namePlaceholder') }),
     },
     {
       component: 'InputNumber',
       componentProps: {
-        placeholder: '请输入排序',
+        placeholder: $t('system.sortedPlaceholder'),
         min: 0,
         style: { width: '100%' },
       },
       fieldName: 'sorted',
-      label: '排序',
-      rules: z.number().min(0, { message: '排序必须大于等于0' }),
+      label: $t('system.sorted'),
+      rules: z.number().min(0, { message: $t('system.sortedPlaceholder') }),
     },
   ];
 
@@ -123,12 +130,12 @@ const drawerFormSchema = (mode: DrawerFormMode): VbenFormSchema[] => {
     baseSchema.push({
       component: 'Switch',
       componentProps: {
-        checkedChildren: '启用',
-        unCheckedChildren: '禁用',
+        checkedChildren: $t('common.enabled'),
+        unCheckedChildren: $t('common.disabled'),
         disabled: true, // 编辑和查看模式下禁用
       } as any,
       fieldName: 'status',
-      label: '系统状态',
+      label: $t('system.systemStatus'),
     } as VbenFormSchema);
   }
 
@@ -150,12 +157,70 @@ export function useSystemTable() {
   // 权限检查工具
   const { hasAccessByCodes } = useAccess();
 
+  /**
+   * 创建系统表格的操作列 actions 配置
+   * 使用统一的 createStandardActions 方法处理国际化、权限检查和消息提示
+   */
+  function createSystemActions() {
+    return createStandardActions<SystemData>(
+      [
+        {
+          action: 'view',
+          accessCodes: ['system:view'],
+          onClick: (row: SystemData) => {
+            drawerForm.openView(row);
+          },
+          noPermissionKey: 'system.noPermissionToView',
+        },
+        {
+          action: 'edit',
+          accessCodes: [''],
+          onClick: (row: SystemData) => {
+            drawerForm.openEdit(row);
+          },
+          noPermissionKey: 'system.noPermissionToEdit',
+        },
+        {
+          action: 'delete',
+          accessCodes: [''],
+          confirmKey: 'common.confirmDelete',
+          onClick: async (row: SystemData) => {
+            try {
+              if (gridApiRef.value) {
+                gridApiRef.value.setLoading(true);
+              }
+              await deleteSystem(row.id);
+                message.success($t('common.deleteSuccess'));
+                if (reloadRef.value) {
+                  reloadRef.value();
+              }
+            } catch (error) {
+              // 错误信息已由拦截器统一处理并显示
+              console.error(error);
+            } finally {
+              if (gridApiRef.value) {
+                gridApiRef.value.setLoading(false);
+              }
+            }
+          },
+          noPermissionKey: 'system.noPermissionToDelete',
+        },
+      ],
+      {
+        hasAccessByCodes,
+        message,
+        gridApi: () => gridApiRef.value,
+        reload: () => reloadRef.value || undefined,
+      },
+    );
+  }
+
   // 先创建 Drawer Form 实例
   const drawerForm = createDrawerForm<SystemData>({
     title: {
-      create: $t('add'),
-      edit: '编辑系统',
-      view: '查看系统详情',
+      create: $t('system.create'),
+      edit: $t('system.edit'),
+      view: $t('system.view'),
     },
     formSchema: drawerFormSchema,
     api: {
@@ -188,7 +253,7 @@ export function useSystemTable() {
 
   // 使用 createGrid 创建表格实例
   const result = createGrid<SystemData>({
-    tableTitle: '系统管理',
+    tableTitle: $t('menus.system'),
     id: 'system-grid',
     pageSize: 10,
     formOptions,
@@ -201,20 +266,20 @@ export function useSystemTable() {
       {
         type: 'seq',
         width: 60,
-        title: '序号',
+        title: $t('common.serialNumber'),
       },
       {
         field: 'code',
-        title: '系统编码',
+        title: $t('system.code'),
       },
       {
         field: 'name',
-        title: '系统名称',
+        title: $t('system.name'),
         sortable: true,
       },
       {
         field: 'status',
-        title: '状态',
+        title: $t('common.status'),
         cellRender: {
           name: 'CellStatusIcon',
           props: {
@@ -222,12 +287,12 @@ export function useSystemTable() {
               true: {
                 icon: 'mdi:check-circle',
                 color: '#52c41a',
-                text: '启用',
+                text: $t('common.enabled'),
               },
               false: {
                 icon: 'mdi:close-circle',
                 color: '#ff4d4f',
-                text: '禁用',
+                text: $t('common.disabled'),
               },
             },
           },
@@ -235,59 +300,18 @@ export function useSystemTable() {
       },
       {
         field: 'sorted',
-        title: '排序',
+        title: $t('system.sorted'),
         sortable: true,
       },
       {
         field: '_actions',
-        title: '操作',
+        title: $t('common.actions'),
         width: 250,
         fixed: 'right',
         cellRender: {
           name: 'CellActions',
           props: {
-            actions: [
-              {
-                text: '查看',
-                onClick: (row: SystemData) => {
-                  drawerForm.openView(row);
-                },
-              },
-              {
-                text: '编辑',
-                onClick: (row: SystemData) => {
-                  drawerForm.openEdit(row);
-                },
-              },
-              {
-                text: '删除',
-                danger: true,
-                confirm: '确定要删除该系统吗？删除后无法恢复。',
-                onClick: async (row: SystemData) => {
-                  try {
-                    if (gridApiRef.value) {
-                      gridApiRef.value.setLoading(true);
-                    }
-                    const response = await deleteSystem(row.id);
-                    if (response.code === 200 || response.code === 'SUCCESS') {
-                      message.success('删除成功');
-                      if (reloadRef.value) {
-                        reloadRef.value();
-                      }
-                    } else {
-                      message.error(response.msg || '删除失败');
-                    }
-                  } catch (error) {
-                    message.error('删除失败');
-                    console.error(error);
-                  } finally {
-                    if (gridApiRef.value) {
-                      gridApiRef.value.setLoading(false);
-                    }
-                  }
-                },
-              },
-            ],
+            actions: createSystemActions(),
           },
         },
       },
@@ -307,31 +331,25 @@ export function useSystemTable() {
   }
 
   // 工具栏按钮配置
-  // 定义工具栏中需要显示的按钮配置
-  const toolbarButtonsConfig: ToolbarButtonConfig[] = [
-    {
-      textKey: 'add',
-      type: 'primary',
-      icon: 'Plus',
-      // 如果不需要权限检查，可以移除 accessCodes 或设置为 undefined
-      // accessCodes: ['system:create'], // 需要权限检查时使用
-    },
-  ];
-
-  // 创建工具栏按钮配置
-  // 使用通用工厂函数处理按钮配置，绑定实际的事件处理器
-  const toolbarButtons = createToolbarButtons({
-    configs: toolbarButtonsConfig,
+  // 使用简化的配置方式，支持默认新增按钮和自定义按钮
+  const toolbarButtons = createToolbarButtonsSimple({
     hasAccessByCodes,
     iconMap,
-    eventHandlers: {
-      // 根据 textKey 绑定到对应的操作
-      add: () => {
+    addButton: {
+      accessCodes: ['system:create'],
+      action: () => {
         drawerForm.openCreate();
       },
-      // 可以在这里添加其他 textKey 的事件处理器
-      // 例如：'export' -> () => exportData(), 'import' -> () => importData() 等
     },
+    // 可以在这里添加其他自定义按钮
+    // customButtons: [
+    //   {
+    //     textKey: 'common.export',
+    //     type: 'default',
+    //     icon: 'Download',
+    //     onClick: () => exportData(),
+    //   },
+    // ],
   });
 
   return {

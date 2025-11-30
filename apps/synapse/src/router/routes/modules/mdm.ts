@@ -8,14 +8,14 @@ const routes: RouteRecordRaw[] = [
       icon: 'ic:baseline-view-in-ar',
       keepAlive: true,
       order: 2,
-      title: $t('menu.mdm'),
+      title: $t('menus.mdm'),
     },
     name: 'Mdm',
     path: '/mdm',
     children: [
       {
         meta: {
-          title: $t('menu.country'),
+          title: $t('menus.country'),
         },
         name: 'CountryManage',
         path: '/mdm/country',

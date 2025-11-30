@@ -113,17 +113,42 @@ const getOptions = computed(() => {
   const refOptionsData = unref(refOptions);
 
   function transformData(data: OptionsItem[]): OptionsItem[] {
-    return data.map((item) => {
-      const value = get(item, valueField);
-      return {
-        ...objectOmit(item, [labelField, valueField, childrenField]),
-        label: get(item, labelField),
-        value: numberToString ? `${value}` : value,
-        ...(childrenField && item[childrenField]
-          ? { children: transformData(item[childrenField]) }
-          : {}),
-      };
-    });
+    if (!Array.isArray(data)) {
+      return [];
+    }
+    return data
+      .map((item) => {
+        if (!item || typeof item !== 'object') {
+          return null;
+        }
+        const value = get(item, valueField);
+        // 过滤掉 value 为 undefined、null 或空字符串的节点，避免 TreeSelect 警告
+        if (
+          value == null ||
+          value === undefined ||
+          value === '' ||
+          (typeof value === 'string' && value.trim() === '')
+        ) {
+          return null;
+        }
+        const transformedItem: OptionsItem = {
+          ...objectOmit(item, [labelField, valueField, childrenField]),
+          label: get(item, labelField),
+          value: numberToString ? `${value}` : value,
+        };
+        // 递归处理 children（如果存在）
+        if (childrenField && item[childrenField]) {
+          if (Array.isArray(item[childrenField]) && item[childrenField].length > 0) {
+            const transformedChildren = transformData(item[childrenField]);
+            // 只有当有有效的子节点时才添加 children 字段
+            if (transformedChildren.length > 0) {
+              transformedItem.children = transformedChildren;
+            }
+          }
+        }
+        return transformedItem;
+      })
+      .filter((item): item is OptionsItem => item !== null); // 过滤掉 null 值
   }
 
   const data: OptionsItem[] = transformData(refOptionsData);
@@ -208,18 +233,37 @@ async function handleFetchForVisible(visible: boolean) {
 }
 
 const mergedParams = computed(() => {
-  return {
+  const merged = {
     ...props.params,
     ...unref(innerParams),
   };
+  console.log('[ApiComponent] mergedParams computed:', {
+    propsParams: props.params,
+    innerParams: unref(innerParams),
+    merged,
+    timestamp: new Date().toISOString(),
+  });
+  return merged;
 });
 
 watch(
   mergedParams,
   (value, oldValue) => {
+    console.log('[ApiComponent] mergedParams watch 触发:', {
+      value,
+      oldValue,
+      isEqual: isEqual(value, oldValue),
+      valueStringified: JSON.stringify(value),
+      oldValueStringified: JSON.stringify(oldValue),
+      timestamp: new Date().toISOString(),
+    });
+    
     if (isEqual(value, oldValue)) {
+      console.log('[ApiComponent] params 未变化，跳过 API 调用');
       return;
     }
+    
+    console.log('[ApiComponent] params 已变化，触发 fetchApi');
     fetchApi();
   },
   { deep: true, immediate: props.immediate },

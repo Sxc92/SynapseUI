@@ -73,3 +73,252 @@
 .ant-app .form-valid-error .ant-picker-focused {
   box-shadow: 0 0 0 2px rgb(255 38 5 / 6%);
 }
+
+/* Switch 组件禁用状态：高亮显示，保留原有样式，只禁用点击 */
+.ant-switch-disabled,
+.ant-switch[disabled],
+.ant-switch.ant-switch-disabled {
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  opacity: 1 !important; /* 确保完全可见，覆盖 Ant Design 默认的 opacity: 0.4 */
+  font-weight: normal !important;
+  border-color: revert !important;
+  border-width: revert !important;
+  color: revert !important;
+  /* 高亮效果：添加边框和阴影 */
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Switch 启用状态（checked）禁用时：高亮绿色 */
+.ant-switch-disabled.ant-switch-checked,
+.ant-switch[disabled].ant-switch-checked,
+.ant-switch.ant-switch-disabled.ant-switch-checked {
+  background-color: #52c41a !important; /* 保持绿色 */
+  opacity: 1 !important;
+  /* 高亮效果：添加更明显的边框和阴影 */
+  box-shadow: 0 0 0 2px rgba(82, 196, 26, 0.3), 0 2px 6px rgba(82, 196, 26, 0.2) !important;
+  border: 1px solid rgba(82, 196, 26, 0.5) !important;
+}
+
+/* Switch 禁用状态（unchecked）禁用时：高亮灰色 */
+.ant-switch-disabled:not(.ant-switch-checked),
+.ant-switch[disabled]:not(.ant-switch-checked),
+.ant-switch.ant-switch-disabled:not(.ant-switch-checked) {
+  background-color: rgba(0, 0, 0, 0.35) !important; /* 更深的灰色，提高对比度 */
+  opacity: 1 !important;
+  font-weight: 700 !important; /* 加粗 */
+  /* 高亮效果：添加边框和阴影 */
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+  border: 1px solid rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Switch 内部元素的禁用状态 */
+.ant-switch-disabled .ant-switch-inner,
+.ant-switch[disabled] .ant-switch-inner,
+.ant-switch-disabled .ant-switch-handle,
+.ant-switch[disabled] .ant-switch-handle,
+.ant-switch.ant-switch-disabled .ant-switch-inner,
+.ant-switch.ant-switch-disabled .ant-switch-handle {
+  opacity: 1 !important; /* 确保内部元素也完全可见 */
+}
+
+/* 抽屉表单垂直布局样式 - 标签和组件分两行显示 */
+.drawer-form-control .relative.flex.pb-4 {
+  padding-bottom: 12px !important;
+}
+
+.drawer-form-control .relative.flex.pb-2 {
+  padding-bottom: 8px !important;
+}
+
+/* 全局禁用字段样式：加粗字体和深色文字 */
+.ant-input[disabled],
+.ant-input-disabled,
+.ant-input-affix-wrapper-disabled .ant-input,
+.ant-select-disabled .ant-select-selector,
+.ant-select.ant-select-disabled .ant-select-selector,
+.ant-picker-disabled .ant-picker-input > input,
+.ant-input-number-disabled .ant-input-number-input,
+textarea.ant-input[disabled],
+/* VbenInput 组件禁用状态 */
+input[disabled]:not(.ant-input):not([class*='ant-']),
+/* TreeSelect 禁用状态 */
+.ant-tree-select-disabled .ant-select-selector,
+.ant-tree-select.ant-tree-select-disabled .ant-select-selector,
+.ant-tree-select[disabled] .ant-select-selector {
+  font-weight: 700 !important;
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+  color: rgba(0, 0, 0, 0.85) !important; /* 深色文字，提高对比度 */
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.85) !important; /* Safari 浏览器支持 */
+  background-color: #f5f5f5 !important; /* 浅灰色背景，提高对比度 */
+  border-color: #d9d9d9 !important; /* 边框颜色 */
+}
+
+/* Select 禁用状态下的文字颜色 */
+.ant-select-disabled .ant-select-selector .ant-select-selection-item,
+.ant-select.ant-select-disabled .ant-select-selector .ant-select-selection-item {
+  color: rgba(0, 0, 0, 0.85) !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
+}
+
+/* TreeSelect 禁用状态：提高对比度 */
+.ant-tree-select-disabled .ant-select-selector,
+.ant-tree-select.ant-tree-select-disabled .ant-select-selector,
+.ant-tree-select[disabled] .ant-select-selector,
+.ant-select-tree-selector-disabled .ant-select-selector,
+.ant-select-tree.ant-select-tree-disabled .ant-select-selector,
+/* 更通用的选择器，确保覆盖所有情况 */
+.ant-tree-select-disabled .ant-select .ant-select-selector,
+.ant-tree-select.ant-tree-select-disabled .ant-select .ant-select-selector,
+.ant-tree-select[disabled] .ant-select .ant-select-selector {
+  color: rgba(0, 0, 0, 0.85) !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+  background-color: #f5f5f5 !important; /* 浅灰色背景，提高对比度 */
+  border-color: #d9d9d9 !important; /* 边框颜色 */
+}
+
+/* TreeSelect 禁用状态下的选中项文字 */
+.ant-tree-select-disabled .ant-select-selector .ant-select-selection-item,
+.ant-tree-select.ant-tree-select-disabled .ant-select-selector .ant-select-selection-item,
+.ant-tree-select[disabled] .ant-select-selector .ant-select-selection-item,
+.ant-select-tree-selector-disabled .ant-select-selector .ant-select-selection-item,
+.ant-select-tree.ant-select-tree-disabled .ant-select-selector .ant-select-selection-item,
+.ant-tree-select-disabled .ant-select-selection-item,
+.ant-tree-select.ant-tree-select-disabled .ant-select-selection-item,
+.ant-tree-select[disabled] .ant-select-selection-item {
+  color: rgba(0, 0, 0, 0.85) !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
+}
+
+/* TreeSelect 禁用状态下的占位符 */
+.ant-tree-select-disabled .ant-select-selection-placeholder,
+.ant-tree-select.ant-tree-select-disabled .ant-select-selection-placeholder,
+.ant-tree-select[disabled] .ant-select-selection-placeholder,
+.ant-select-tree-selector-disabled .ant-select-selection-placeholder {
+  color: rgba(0, 0, 0, 0.25) !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
+}
+
+/* TreeSelect 禁用状态下的图标 */
+.ant-tree-select-disabled .ant-select-arrow,
+.ant-tree-select.ant-tree-select-disabled .ant-select-arrow,
+.ant-tree-select[disabled] .ant-select-arrow,
+.ant-select-tree-selector-disabled .ant-select-arrow {
+  opacity: 0.3 !important;
+  cursor: not-allowed !important;
+}
+
+/* TreeSelect 禁用状态下的整个组件容器 */
+.ant-tree-select-disabled,
+.ant-tree-select.ant-tree-select-disabled,
+.ant-tree-select[disabled] {
+  cursor: not-allowed !important;
+}
+
+.ant-tree-select-disabled .ant-select,
+.ant-tree-select.ant-tree-select-disabled .ant-select,
+.ant-tree-select[disabled] .ant-select {
+  cursor: not-allowed !important;
+}
+
+/* 按钮禁用状态：加粗字体和深色文字 */
+.ant-btn[disabled],
+.ant-btn-disabled,
+.ant-btn.ant-btn-disabled {
+  font-weight: 700 !important;
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+  color: rgba(0, 0, 0, 0.85) !important;
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.85) !important; /* Safari 浏览器支持 */
+}
+
+.ant-btn[disabled] > span,
+.ant-btn-disabled > span,
+.ant-btn.ant-btn-disabled > span {
+  font-weight: 700 !important;
+  color: rgba(0, 0, 0, 0.85) !important;
+  opacity: 1 !important;
+}
+
+/* 下拉菜单（Menu）禁用项样式：加粗字体和深色文字 */
+.ant-menu-item-disabled,
+.ant-menu-item.ant-menu-item-disabled,
+.ant-menu-submenu-title-disabled,
+.ant-menu-submenu-title.ant-menu-submenu-title-disabled,
+.ant-dropdown-menu-item-disabled,
+.ant-dropdown-menu-item.ant-dropdown-menu-item-disabled {
+  font-weight: 700 !important;
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+  color: rgba(0, 0, 0, 0.25) !important; /* 禁用项使用浅色，但保持加粗 */
+}
+
+.ant-menu-item-disabled > span,
+.ant-menu-item.ant-menu-item-disabled > span,
+.ant-menu-submenu-title-disabled > span,
+.ant-menu-submenu-title.ant-menu-submenu-title-disabled > span,
+.ant-dropdown-menu-item-disabled > span,
+.ant-dropdown-menu-item.ant-dropdown-menu-item-disabled > span {
+  font-weight: 700 !important;
+  opacity: 1 !important;
+}
+
+/* 自定义下拉菜单项（CellActions 组件）禁用样式 */
+.dropdown-menu-item-disabled,
+.dropdown-menu-item.dropdown-menu-item-disabled {
+  font-weight: 700 !important;
+  opacity: 1 !important;
+  color: rgba(0, 0, 0, 0.25) !important;
+}
+
+.dropdown-menu-item-disabled > span,
+.dropdown-menu-item.dropdown-menu-item-disabled > span {
+  font-weight: 700 !important;
+  opacity: 1 !important;
+}
+
+/* CellActions 下拉菜单触发按钮：加粗字体 */
+.cell-actions-dropdown-trigger,
+.cell-actions-dropdown-trigger.ant-btn {
+  font-weight: 700 !important;
+}
+
+.cell-actions-dropdown-trigger > span,
+.cell-actions-dropdown-trigger.ant-btn > span {
+  font-weight: 700 !important;
+}
+
+/* Input 和 Select 禁用状态：加粗字体和深色文字 */
+.ant-input[disabled],
+.ant-input-disabled,
+.ant-input-affix-wrapper-disabled .ant-input,
+.ant-input-affix-wrapper.ant-input-affix-wrapper-disabled .ant-input {
+  font-weight: 700 !important;
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+  color: rgba(0, 0, 0, 0.85) !important;
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.85) !important; /* Safari 浏览器支持 */
+}
+
+.ant-select-disabled .ant-select-selector,
+.ant-select.ant-select-disabled .ant-select-selector {
+  font-weight: 700 !important;
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+  color: rgba(0, 0, 0, 0.85) !important;
+}
+
+.ant-select-disabled .ant-select-selector .ant-select-selection-item,
+.ant-select.ant-select-disabled .ant-select-selector .ant-select-selection-item,
+.ant-select-disabled .ant-select-selector .ant-select-selection-placeholder,
+.ant-select.ant-select-disabled .ant-select-selector .ant-select-selection-placeholder {
+  font-weight: 700 !important;
+  color: rgba(0, 0, 0, 0.85) !important;
+  opacity: 1 !important;
+}
